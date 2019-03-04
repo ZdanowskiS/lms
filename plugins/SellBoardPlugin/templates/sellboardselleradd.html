@@ -1,0 +1,54 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="selleradd" ID="selleradd" METHOD="POST" ACTION="?m=sellboardselleradd">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/customer.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="selleradd[name]" VALUE="{$selleradd.name}" MAXLENGTH="64" size="64" {tip text="Enter category name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/mail.gif" ALT="{trans("E-mail:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("e-mail:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="selleradd[email]" VALUE="{$selleradd.email}" MAXLENGTH="32" size="32" {tip text="Enter category name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/phone.gif" ALT="{trans("Phone:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("phone:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="selleradd[phone]" VALUE="{$selleradd.phone}" MAXLENGTH="16" size="16" {tip text="Enter category name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+			<A href="javascript:document.selleradd.submit();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></A>
+			<A href="?m=sellboardsellerlist">{trans("Cancel")} <img src="img/cancel.gif" alt=""></A><BR>
+			<INPUT type="checkbox" name="categoryadd[reuse]" id="reuse" value="ON" {if $categoryadd.reuse}checked{/if}> <label for="reuse">{trans("Display this form again, when this seller is saved")}</label>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

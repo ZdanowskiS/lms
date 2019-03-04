@@ -1,0 +1,129 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+{$lastonline_limit = ConfigHelper::getConfig('phpui.lastonline_limit')}
+<FORM method="get" action="?m={$layout.module}" name="choosefilter">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+<INPUT type="hidden" NAME="m" VALUE="sellboarditemlist">
+
+</p>
+<TABLE class="lmsbox lms-ui-background-cycle">
+	<COLGROUP>
+		<COL style="width: 20%;">
+		<COL style="width: 20%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 1%;">
+	</COLGROUP>
+	<THEAD>
+		{block name="locdict-list-header"}
+	<TR>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/doc.gif" alt=""> <A href="?m=sellboarditemlist&amp;o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}">{trans("Name:")}</A>{if $listdata.order == "name"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/money.gif" alt=""> <A href="?m=sellboarditemlist&amp;o=value{if $listdata.direction == "asc" && $listdata.order == "value"},desc{/if}">{trans("Value:")}</A>{if $listdata.order == "value"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/options.gif" alt=""> <A href="?m=sellboarditemlist&amp;o=ammount{if $listdata.direction == "asc" && $listdata.order == "ammount"},desc{/if}">{trans("Ammount:")}</A>{if $listdata.order == "ammount"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/customer.gif" alt=""> <A href="?m=sellboarditemlist&amp;o=seller{if $listdata.direction == "asc" && $listdata.order == "seller"},desc{/if}">{trans("Seller:")}</A>{if $listdata.order == "seller"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<TD WIDTH="1%" NOWRAP>
+			{trans("ID:")}
+		</TD>
+		<td scope="col" class="text-right nobr">
+			<A href="?m=sellboarditemadd">{trans("New Item")} <img src="img/save.gif" alt=""></A>
+		</td>
+	</TR>
+	<TR>
+		<TD colspan="6">
+			<SPAN class="bold">{trans("Filter:")}</SPAN>&nbsp;
+			<SPAN class="nobr">{trans("Category:")}
+			<SELECT SIZE="1" NAME="boardc" id="category" ONCHANGE="document.choosefilter.submit();" >
+				<OPTION VALUE="0"{if !$listdata.dictst} SELECTED{/if}>{trans("- all -")}</OPTION>
+				{foreach $categorylist as $category}
+				<OPTION VALUE="{$category.id}" {if $category.id == $listdata.boardc} selected{/if}>{$category.name}</OPTION>
+				{/foreach}
+			</SELECT></SPAN>
+			<SPAN class="nobr">{trans("From Value:")}
+			<INPUT TYPE="TEXT" NAME="boardvfrom" VALUE="{$listdata.boardvfrom}" MAXLENGTH="4" size="4" {tip text="Enter lowest price" trigger="fromvalue" bold=1}>
+			</SPAN>
+			<SPAN class="nobr">{trans("To Value:")}
+			<INPUT TYPE="TEXT" NAME="boardvto" VALUE="{$listdata.boardvto}" MAXLENGTH="4" size="4" {tip text="Enter highest price" trigger="tovalue" bold=1}>
+			</SPAN>
+		</TD>
+	</TR>
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="6">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+		{/block}
+	</THEAD>
+	<TFOOT>
+		{block name="sellboard-list-footer"}
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="6">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD colspan="4" class="text-right bold">
+
+		</TD>
+		<TD colspan="2" class="text-right">
+
+		</TD>
+	</TR>
+		{/block}
+	</TFOOT>
+	<TBODY>
+	{foreach $itemlist as $item}
+		{block name="locdict-list-body"}
+	<TR class="highlight" data-target-url="?m=sellboarditeminfo&amp;id={$item.id}">
+		<TD class="nobr">
+			<span class="bold">
+			{$item.name}</span>
+		</TD>
+		<TD class="nobr">
+			{$item.value|money_format}
+		</TD>
+		<TD class="nobr">
+			{$item.ammount}
+		</TD>
+		<TD class="nobr">
+			<A href="?m=sellboardsellerinfo&amp;id={$item.sellerid}">{$item.sellername}</A>
+		</TD>
+		<TD>
+			({$item.id|string_format:"%04d"})
+		</TD>
+		<TD class="text-right lms-ui-buttons nobr">
+			<a onClick="return confirmLink(this, '{t a=$item.name}Are you sure, you want to remove item \'$a\' from database?{/t}')" href="?m=sellboarditemdel&amp;id={$item.id}"><img src="img/delete.gif" alt="{trans("Delete")}" title="{trans("Delete")}"></A>
+			<a href="?m=sellboarditemedit&amp;id={$item.id}"><img src="img/edit.gif" alt="{trans("Edit")}" title="{trans("Edit")}"></A>
+			<a href="?m=sellboarditeminfo&amp;id={$item.id}"><img src="img/info.gif" alt="{trans("Info")}" title="{trans("Info")}"></A>
+		</TD>
+	</TR>
+		{/block}
+	{foreachelse}
+		{block name="sellboard-list-empty-row"}
+	<TR>
+		<TD colspan="5" class="empty-table">
+			<p>{trans("No such items in database.")}</p>
+		</TD>
+	</TR>
+		{/block}
+	{/foreach}
+	</TBODY>
+</TABLE>
+</FORM>
+{/block}

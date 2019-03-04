@@ -1,0 +1,112 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+{$lastonline_limit = ConfigHelper::getConfig('phpui.lastonline_limit')}
+<FORM method="get" action="?m={$layout.module}" name="choosefilter">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+<INPUT type="hidden" NAME="m" VALUE="sellboarditemlist">
+<INPUT type="hidden" NAME="page" id="page" VALUE="1">
+</p>
+<TABLE class="lmsbox lms-ui-background-cycle">
+	<COLGROUP>
+		<COL style="width: 20%;">
+		<COL style="width: 20%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 1%;">
+	</COLGROUP>
+	<THEAD>
+		{block name="locdict-list-header"}
+	<TR>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/host.gif" alt=""> <A href="?m=sellboardhostlist&amp;o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}">{trans("Name:")}</A>{if $listdata.order == "name"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/options.gif" alt=""> <A href="?m=sellboarhostlist&amp;o=email{if $listdata.direction == "asc" && $listdata.order == "technology"},desc{/if}">{trans("url:")}</A>{if $listdata.order == "e-mail"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/options.gif" alt=""> <A href="?m=sellboardhostlist&amp;o=phone{if $listdata.direction == "asc" && $listdata.order == "phone"},desc{/if}">{trans("Shared:")}</A>{if $listdata.order == "shared"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/options.gif" alt=""> <A href="?m=sellboarditemlist&amp;o=phone{if $listdata.direction == "asc" && $listdata.order == "phone"},desc{/if}">{trans("Access:")}</A>{if $listdata.order == "status"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<TD WIDTH="1%" NOWRAP>
+			{trans("ID:")}
+		</TD>
+		<td scope="col" class="text-right nobr">
+		</td>
+	</TR>
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="6">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+		{/block}
+	</THEAD>
+	<TFOOT>
+		{block name="locdict-list-footer"}
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="6">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD colspan="2" class="text-right bold">
+
+		</TD>
+		<TD colspan="4" class="text-right">
+			<A href="?m=sellboardhostget">{trans("Get Hosts")} <img src="img/reload.gif" alt=""></A>
+			<A href="?m=sellboardhostcheck">{trans("Check Hosts")} <img src="img/reload.gif" alt=""></A>
+			<A href="?m=sellboardhostadd">{trans("New Host")} <img src="img/save.gif" alt=""></A>
+		</TD>
+	</TR>
+		{/block}
+	</TFOOT>
+	<TBODY>
+	{foreach $itemlist as $item}
+		{block name="locdict-list-body"}
+	<TR class="highlight" data-target-url="?m=sellboardhostinfo&amp;id={$item.id}">
+		<TD class="nobr">
+			<span class="bold">
+			{$item.name}</span>
+		</TD>
+		<TD class="nobr">
+			{$item.url}
+		</TD>
+		<TD class="nobr">
+			{if $item.shared}{trans("shared")}{else}{trans("private")}{/if}
+		</TD>
+		<TD class="nobr">
+			{if $item.access}{trans("Yes")}{else}{trans("No")}{/if}
+		</TD>
+		<TD>
+			({$item.id|string_format:"%04d"})
+		</TD>
+		<TD class="text-right lms-ui-buttons nobr">
+			<a onClick="return confirmLink(this, '{t a=$item.name}Are you sure, you want to remove radius host \'$a\' from database?{/t}')" href="?m=sellboardhostdel&amp;id={$item.id}"><img src="img/delete.gif" alt="{trans("Delete")}" title="{trans("Delete")}"></A>
+			<a href="?m=sellboardhostedit&amp;id={$item.id}"><img src="img/edit.gif" alt="{trans("Edit")}" title="{trans("Edit")}"></A>
+			<a href="?m=sellboardhostinfo&amp;id={$item.id}"><img src="img/info.gif" alt="{trans("Info")}" title="{trans("Info")}"></A>
+		</TD>
+	</TR>
+		{/block}
+	{foreachelse}
+		{block name="locdict-list-empty-row"}
+	<TR>
+		<TD colspan="5" class="empty-table">
+			<p>{trans("No such hosts in database.")}</p>
+		</TD>
+	</TR>
+		{/block}
+	{/foreach}
+	</TBODY>
+</TABLE>
+</FORM>
+{/block}

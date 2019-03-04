@@ -1,0 +1,64 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="itemadd" ID="itemadd" METHOD="POST" ACTION="?m=sellboarditemadd">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$hostinfo.name}
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/money.gif" ALT="{trans("value:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("URL:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$hostinfo.url}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/{if ! $hostinfo.access}no{/if}access.gif" ALT="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Access:")}</B>
+		</TD>
+		<TD width="98%">
+			{if $hostinfo.access}{trans("Yes")}{else}{trans("No")}{/if}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/{if ! $hostinfo.share}no{/if}access.gif" ALT="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Shared:")}</B>
+		</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			{if $hostinfo.share}{trans("Yes")}{else}{trans("No")}{/if}
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+			<A href="?m=sellboardhostedit&id={$hostinfo.id}">{trans("Edit")} <img src="img/cancel.gif" alt=""></A>
+			<A onClick="return confirmLink(this, '{t a=$sellerinfo.name}Are you sure, you want to remove seller \'$a\' from database?{/t}')" href="?m=sellboardhostdel&amp;id={$hostinfo.id}">{trans("Delete")}<img src="img/delete.gif" alt="{trans("Delete")}" title="{trans("Delete")}"></A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

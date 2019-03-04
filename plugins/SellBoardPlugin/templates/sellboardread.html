@@ -1,0 +1,129 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<script type="text/javascript">
+window.onload = function() {
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.open("POST", "?m=sellboardread&ajax=1&mode=category", true);
+	xhttp.send();
+	xhttp.onreadystatechange = function() {
+		if(this.responseText.length>0){
+			document.getElementById("category").innerHTML = this.responseText;
+    	}
+	};
+	item();
+}
+
+function item() {
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.open("POST", "?m=sellboardread&ajax=1&mode=item", true);
+	xhttp.send();
+	xhttp.onreadystatechange = function() {
+		if(this.responseText.length>0){
+     		document.getElementById("itemlist").innerHTML = this.responseText;
+		}
+	};
+}
+
+</script>
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<div id="modelid">
+</div>
+{$lastonline_limit = ConfigHelper::getConfig('phpui.lastonline_limit')}
+<FORM method="get" action="?m={$layout.module}" name="choosefilter">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+<INPUT type="hidden" NAME="m" VALUE="sellboardread">
+<INPUT type="hidden" NAME="page" id="page" VALUE="1">
+</p>
+<TABLE class="lmsbox lms-ui-background-cycle">
+	<COLGROUP>
+		<COL style="width: 20%;">
+		<COL style="width: 30%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 1%;">
+	</COLGROUP>
+	<THEAD>
+		{block name="read-list-header"}
+	<TR>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/doc.gif" alt="">{trans("Name:")}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/desc.gif" alt="">{trans("Description:")}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/host.gif" alt="">{trans("Seller:")}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/calendar.gif" alt="">{trans("Creation time:")}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/options.gif" alt="">{trans("Ammount:")}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/money.gif" alt="">{trans("Value")}:</SPAN><BR>
+		</td>
+		<td scope="col" class="text-right nobr">
+
+		</td>
+	</TR>
+	<TR>
+		<TD colspan="7">
+			<SPAN class="bold">{trans("Filter:")}</SPAN>&nbsp;
+			<SPAN class="nobr">{trans("Host:")}
+			<SELECT SIZE="1" NAME="boardh" ONCHANGE="document.choosefilter.submit();" {tip text="Only active hosts" trigger="boardh" bold=1}>
+				<OPTION VALUE="0"{if !$listdata.boardh} SELECTED{/if}>{trans("- all -")}</OPTION>
+				{foreach $hostlist as $host}
+				<OPTION VALUE="{$host.id}" {if $host.id == $listdata.boardh} selected{/if}>{trans($host.name)}</OPTION>
+				{/foreach}
+			</SELECT></SPAN>
+			<SPAN class="nobr">{trans("Category:")}
+			<SELECT SIZE="1" NAME="boardc" id="category" ONCHANGE="document.choosefilter.submit();" >
+				<OPTION VALUE="0"{if !$listdata.dictst} SELECTED{/if}>{trans("- all -")}</OPTION>
+				{foreach $categorylist as $category}
+				<OPTION VALUE="{$category.name}" {if $category.name == $listdata.boardc} selected{/if}>{$category.name}</OPTION>
+				{/foreach}
+			</SELECT></SPAN>
+			<SPAN class="nobr">{trans("From Value:")}
+			<INPUT TYPE="TEXT" NAME="boardvfrom" VALUE="{$listdata.boardvfrom}" MAXLENGTH="4" size="4" {tip text="Enter lowest price" trigger="fromvalue" bold=1}>
+			</SPAN>
+			<SPAN class="nobr">{trans("To Value:")}
+			<INPUT TYPE="TEXT" NAME="boardvto" VALUE="{$listdata.boardvto}" MAXLENGTH="4" size="4" {tip text="Enter highest price" trigger="tovalue" bold=1}>
+			</SPAN>
+		</TD>
+	</TR>
+
+		{/block}
+	</THEAD>
+	<TFOOT>
+		{block name="read-list-footer"}
+
+	<TR>
+		<TD colspan="7" class="text-right bold">
+
+		</TD>
+
+	</TR>
+		{/block}
+	</TFOOT>
+	<TBODY id="itemlist">
+
+		{block name="read-list-empty-row"}
+	<TR>
+		<TD colspan="5" class="empty-table">
+			<p>{trans("No such items.")}</p>
+		</TD>
+	</TR>
+		{/block}
+
+	</TBODY>
+</TABLE>
+</FORM>
+{/block}

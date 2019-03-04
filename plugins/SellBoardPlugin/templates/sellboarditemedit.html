@@ -1,0 +1,87 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="itemedit" ID="itemedit" METHOD="POST" ACTION="?m=sellboarditemedit&id={$itemdata.id}">
+<INPUT type="hidden" name="itemedit[id]" value="{$itemdata.id}">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="itemedit[name]" VALUE="{$itemdata.name}" MAXLENGTH="32" size="32" {tip text="Enter host name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/money.gif" ALT="{trans("value:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Value:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="itemedit[value]" VALUE="{$itemdata.value}" MAXLENGTH="6" size="6" {tip text="Enter host name" trigger="name" bold=1}>
+			x {trans("Ammount:")}
+			<INPUT TYPE="TEXT" NAME="itemedit[ammount]" VALUE="{$itemdata.ammount}" MAXLENGTH="6" size="6" {tip text="Enter host name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+	<TR>
+		<TD width="1%">
+			<img src="img/info.gif" alt="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Description:")}</B>
+		</TD>
+		<TD width="98%">
+			<TEXTAREA rows="5" cols="50" name="itemedit[description]" {tip text="Enter additional information (optional)" trigger="description"}>{$itemdata.description}</TEXTAREA>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD style="width: 1%;">
+			<B>{trans("Seller:")}</B>
+		</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			<SELECT SIZE="1" NAME="itemedit[sellerid]" {tip text="Select seller" trigger="access"}>
+				<OPTION VALUE="0">{trans("- select -")}</OPTION>
+			{foreach from=$sellers item=item key=key}
+				<OPTION VALUE="1"{if $key==$itemdata.sellerid} SELECTED{/if}>{$item.name}</OPTION>
+			{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+	<TD style="width: 1%;">
+		<IMG src="img/option.gif" alt="">
+	</TD>
+	<TD style="width: 1%;" nowrap>
+		<B>{trans("Categories:")}</B>
+	</TD>
+		<TD style="width: 98%;" class="multiselect nobr">
+			<SELECT SIZE="1" NAME="category[]" class="lms-ui-multiselect" {tip text="Select address group"} multiple data-default-value="{trans("- all -")}">
+			{foreach item=item from=$categorylist key=key}
+					<OPTION VALUE="{$item.id}" {if $key==$itemdata.category[$key].categoryid} SELECTED{/if}>{$item.name}</OPTION>
+			{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+			<A href="javascript:document.itemedit.submit();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></A>
+			<A href="?m=sellboarditeminfo&amp;id={$itemdata.id}">{trans("Cancel")} <img src="img/cancel.gif" alt=""></A><BR>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

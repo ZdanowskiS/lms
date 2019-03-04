@@ -1,0 +1,53 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="selleradd" ID="selleradd" METHOD="POST" ACTION="?m=sellboardselleradd">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/customer.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$sellerinfo.name}
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/mail.gif" ALT="{trans("E-mail:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("e-mail:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$sellerinfo.email}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/phone.gif" ALT="{trans("Phone:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("phone:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$sellerinfo.phone}
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+			<A href="?m=sellboardselleredit&id={$sellerinfo.id}">{trans("Edit")} <img src="img/cancel.gif" alt=""></A>
+			<A onClick="return confirmLink(this, '{t a=$sellerinfo.name}Are you sure, you want to remove seller \'$a\' from database?{/t}')" href="?m=sellboardsellerdel&amp;id={$sellerinfo.id}">{trans("Delete")}<img src="img/delete.gif" alt="{trans("Delete")}" title="{trans("Delete")}"></A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

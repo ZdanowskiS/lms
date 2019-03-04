@@ -1,0 +1,73 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="itemadd" ID="itemadd" METHOD="POST" ACTION="?m=sellboarditemadd">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="itemadd[name]" VALUE="{$itemadd.name}" MAXLENGTH="32" size="32" {tip text="Enter host name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/money.gif" ALT="{trans("value:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Value:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="itemadd[value]" VALUE="{$itemadd.value}" MAXLENGTH="6" size="6" {tip text="Enter host name" trigger="name" bold=1}>
+			x {trans("Ammount:")}
+			<INPUT TYPE="TEXT" NAME="itemadd[ammount]" VALUE="{$itemadd.ammount}" MAXLENGTH="6" size="6" {tip text="Enter host name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+	<TR>
+		<TD width="1%">
+			<img src="img/info.gif" alt="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Description:")}</B>
+		</TD>
+		<TD width="98%">
+			<TEXTAREA rows="5" cols="50" name="itemadd[description]" {tip text="Enter additional information (optional)" trigger="description"}>{$itemadd.description}</TEXTAREA>
+		</TD>
+	</TR>
+
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD style="width: 1%;">
+			<B>{trans("Seller:")}</B>
+		</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			<SELECT SIZE="1" NAME="itemadd[sellerid]" {tip text="Select seller" trigger="access"}>
+				<OPTION VALUE="0">{trans("- select seller -")}</OPTION>
+			{foreach from=$sellers item=item key=key}
+				<OPTION VALUE="1"{if $key} SELECTED{/if}>{$item.name}</OPTION>
+			{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+			<A href="javascript:document.itemadd.submit();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></A>
+			<A href="?m=sellboarditemlist">{trans("Cancel")} <img src="img/cancel.gif" alt=""></A><BR>
+			<INPUT type="checkbox" name="hostadd[reuse]" id="reuse" value="ON" {if $hostadd.reuse}checked{/if}> <label for="reuse">{trans("Display this form again, when this item is saved")}</label>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

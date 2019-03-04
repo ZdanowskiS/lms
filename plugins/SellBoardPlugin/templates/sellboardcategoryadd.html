@@ -1,0 +1,32 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="categoryadd" ID="categoryadd" METHOD="POST" ACTION="?m=sellboardcategoryadd">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="categoryadd[name]" VALUE="{$categoryadd.name}" MAXLENGTH="64" size="64" {tip text="Enter category name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD align="right" colspan="3">
+			<A href="javascript:document.categoryadd.submit();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></A>
+			<A href="?m=sellboardcategorylist">{trans("Cancel")} <img src="img/cancel.gif" alt=""></A><BR>
+			<INPUT type="checkbox" name="categoryadd[reuse]" id="reuse" value="ON" {if $categoryadd.reuse}checked{/if}> <label for="reuse">{trans("Display this form again, when this category is saved")}</label>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

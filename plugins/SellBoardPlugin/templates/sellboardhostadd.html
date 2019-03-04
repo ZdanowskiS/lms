@@ -1,0 +1,71 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="hostadd" ID="hostadd" METHOD="POST" ACTION="?m=sellboardhostadd">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/host.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="hostadd[name]" VALUE="{$hostadd.name}" MAXLENGTH="64" size="32" {tip text="Enter host name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/ip.gif" ALT="{trans("URL:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("URL:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="hostadd[url]" VALUE="{$hostadd.url}" size="32" required {tip text="Enter host url" trigger="url"}>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/{if ! $hostadd.access}no{/if}access.gif" ALT="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Access:")}</B>
+		</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			<SELECT SIZE="1" NAME="hostadd[access]" {tip text="Select node status" trigger="access"}>
+				<OPTION VALUE="1"{if $hostadd.access} SELECTED{/if}>{trans("connected<!singular>")}</OPTION>
+				<OPTION VALUE="0"{if !$hostadd.access} SELECTED{/if}>{trans("disconnected<!singular>")}</OPTION>
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/{if ! $hostadd.access}no{/if}access.gif" ALT="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Shared:")}</B>
+		</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			<SELECT SIZE="1" NAME="hostadd[share]" {tip text="Select node status" trigger="access"}>
+				<OPTION VALUE="1"{if $hostadd.share} SELECTED{/if}>{trans("Yes")}</OPTION>
+				<OPTION VALUE="0"{if !$hostadd.share} SELECTED{/if}>{trans("No")}</OPTION>
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+			<A href="javascript:document.hostadd.submit();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></A>
+			<A href="?m=sellboardhostlist">{trans("Cancel")} <img src="img/cancel.gif" alt=""></A><BR>
+			<INPUT type="checkbox" name="hostadd[reuse]" id="reuse" value="ON" {if $hostadd.reuse}checked{/if}> <label for="reuse">{trans("Display this form again, when this attribute is saved")}</label>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

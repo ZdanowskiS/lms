@@ -1,0 +1,103 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$iteminfo.name}
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/calendar.gif" ALT="{trans("time:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Creation time:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$iteminfo.cdate|date_format:"%Y/%m/%d %H:%M"}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/money.gif" ALT="{trans("value:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Value:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$iteminfo.value|money_format}
+			x {trans("Ammount:")}
+			{$iteminfo.ammount}
+		</TD>
+	</TR>
+	<TR>
+		<TD width="1%">
+			<img src="img/info.gif" alt="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Description:")}</B>
+		</TD>
+		<TD width="98%">
+			<TABLE WIDTH="100%" CELLPADDING="5">
+				<TR>
+					<TD CLASS="fall superlight">
+						{$iteminfo.description|replace:"\n":"<BR>"}
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD style="width: 1%;">
+			<B>{trans("Seller:")}</B>
+		</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			{$iteminfo.sellername}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/phone.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD style="width: 1%;">
+			<B>{trans("Phone:")}</B>
+		</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			{$iteminfo.phone}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/email.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD style="width: 1%;">
+			<B>{trans("Mail:")}</B>
+		</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			{$iteminfo.email}
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

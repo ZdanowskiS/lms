@@ -1,0 +1,57 @@
+DROP TABLE IF EXISTS sellboard_itemcategories;
+DROP TABLE IF EXISTS sellboard_items;
+DROP TABLE IF EXISTS sellboard_category;
+DROP TABLE IF EXISTS sellboard_category;
+DROP TABLE IF EXISTS sellboard_hosts;
+DROP TABLE IF EXISTS sellboard_sellers;
+
+CREATE TABLE sellboard_hosts (
+	id int(11) NOT NULL auto_increment,
+	name varchar(64) DEFAULT '' NOT NULL,
+    url 	varchar(128) DEFAULT 0 NOT NULL,
+	access smallint DEFAULT 1 NOT NULL,
+	share smallint DEFAULT 1 NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE (name)
+) ENGINE=InnoDB;
+
+CREATE TABLE sellboard_sellers (
+	id int(11) NOT NULL auto_increment,
+	name varchar(64) DEFAULT '' NOT NULL,
+	phone varchar(32) DEFAULT '' NOT NULL,
+	email varchar(255) DEFAULT '' NOT NULL,
+	PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE sellboard_items (
+	id int(11) NOT NULL auto_increment,
+	name varchar(64) DEFAULT '' NOT NULL,
+	description text DEFAULT '' NOT NULL,
+	value decimal(9,2) DEFAULT 0 NOT NULL,
+	ammount int(11) DEFAULT 0 NOT NULL,
+	cdate int(11) DEFAULT 0 NOT NULL,
+	sellerid int(11) DEFAULT NULL,
+	userid int(11) DEFAULT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (sellerid) REFERENCES sellboard_sellers (id) ON DELETE SET NULL ON UPDATE CASCADE,
+	FOREIGN KEY (userid) REFERENCES users (id) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE sellboard_category (
+	id int(11) NOT NULL auto_increment,
+	name varchar(64) DEFAULT '' NOT NULL,
+	PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE sellboard_itemcategories (
+	itemid int(11) NOT NULL,
+	categoryid int(11) NOT NULL,
+	FOREIGN KEY (itemid) REFERENCES sellboard_items (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (categoryid) REFERENCES sellboard_category (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES
+('sellboard', 'blockip','','Block ip separated by comma',1),
+('sellboard', 'allowip','','Allowed ip separated by comma',1);
+
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_SellBoardPlugin', '2019010800');
