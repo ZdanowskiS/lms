@@ -41,6 +41,9 @@ if (!$categories) {
 	die;
 }
 
+$allow_empty_categories = ConfigHelper::checkConfig('phpui.helpdesk_allow_empty_categories');
+$empty_category_warning = ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.helpdesk_empty_category_warning', true));
+
 if(isset($_POST['ticket']))
 {
 	$ticket = $_POST['ticket'];
@@ -67,8 +70,13 @@ if(isset($_POST['ticket']))
 		$SESSION->redirect('?m=rtticketadd&id='.$queue);
 	}
 
-	if(empty($ticket['categories']))
-		$error['categories'] = trans('You have to select category!');
+	if (empty($ticket['categories']) && (!$allow_empty_categories || (empty($ticket['categorywarn']) && $empty_category_warning))) {
+		if ($allow_empty_categories) {
+			$ticket['categorywarn'] = 1;
+			$error['categories'] = trans('Category selection is recommended but not required!');
+		} else
+			$error['categories'] = trans('You have to select category!');
+	}
 
 	if(($LMS->GetUserRightsRT(Auth::GetCurrentUser(), $queue) & 2) != 2)
 		$error['queue'] = trans('You have no privileges to this queue!');
@@ -105,6 +113,15 @@ if(isset($_POST['ticket']))
 			$error['requestor_name'] = $error['requestor_mail'] = $error['requestor_phone'] =
 				trans('At least requestor name, mail or phone should be filled!');
 	}
+
+	$hook_data = $LMS->executeHook('ticketadd_validation_before_submit',
+		array(
+			'ticket' => $ticket,
+			'error' => $error,
+		)
+	);
+	$ticket = $hook_data['ticket'];
+	$error = $hook_data['error'];
 
 	if (!$error) {
 		if (!$ticket['customerid']) {
@@ -160,6 +177,13 @@ if(isset($_POST['ticket']))
 		}
 		$id = $LMS->TicketAdd($ticket, $files);
 
+		$hook_data = $LMS->executeHook('ticketadd_after_submit',
+			array(
+				'id' => $id,
+				'ticket' => $ticket,
+			)
+		);
+		$ticket = $hook_data['ticket'];
 		// deletes uploaded files
 		if (!empty($files) && !empty($tmppath))
 			rrmdir($tmppath);
@@ -304,6 +328,8 @@ if(isset($_POST['ticket']))
 
 	if (ConfigHelper::checkConfig('phpui.helpdesk_notify'))
 		$ticket['notify'] = TRUE;
+
+	$ticket['categorywarn'] = 0;
 }
 
 $layout['pagetitle'] = trans('New Ticket');
@@ -319,7 +345,7 @@ if (isset($ticket['customerid']) && intval($ticket['customerid'])) {
 	$SMARTY->assign('customerinfo', $LMS->GetCustomer($ticket['customerid']));
 }
 
-$netnodelist = $LMS->GetNetNodeList(array(), 'name');
+$netnodelist = $LMS->GetNetNodeList(array('short' => true), 'name');
 unset($netnodelist['total']);
 unset($netnodelist['order']);
 unset($netnodelist['direction']);
@@ -328,6 +354,7 @@ if (isset($ticket['netnodeid']) && !empty($ticket['netnodeid']))
 	$search = array('netnode' => $ticket['netnodeid']);
 else
 	$search = array();
+$search['short'] = true;
 $netdevlist = $LMS->GetNetDevList('name', $search);
 unset($netdevlist['total']);
 unset($netdevlist['order']);
@@ -337,6 +364,15 @@ $invprojectlist = $LMS->GetProjects('name', array());
 unset($invprojectlist['total']);
 unset($invprojectlist['order']);
 unset($invprojectlist['direction']);
+
+$hook_data = $LMS->executeHook(
+    'ticketadd_before_display',
+    array(
+        'ticket' => $ticket,
+        'smarty' => $SMARTY
+    )
+);
+$ticket = $hook_data['ticket'];
 
 $SMARTY->assign('ticket', $ticket);
 $SMARTY->assign('queue', $queue);

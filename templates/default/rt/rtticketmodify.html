@@ -1,9 +1,8 @@
 <style>
 
 	#ticket.lms-ui-box-container .lms-ui-box-row-label {
-		width: 12em;
+		width:12em;
 	}
-
 	#requestor.lms-ui-box-row-field {
 		flex-direction: column !important;
 		align-items: flex-start !important;
@@ -34,7 +33,7 @@
 
 	{box_contents}
 		{box_panel}
-
+			{block name="rtticketmodify-leftcolumn"}
 			{if $layout.module != 'eventadd'}
 			{box_row icon="img/customer.gif" label="Customer:"}
 				{$customer_selector='[name=&quot;ticket[custid]&quot;]'}
@@ -94,6 +93,9 @@
 {/if}
 
 			{box_row icon="img/queue.gif" label="Categories:"}
+				{if ConfigHelper::checkConfig('phpui.helpdesk_allow_empty_categories')}
+				<input type="hidden" name="ticket[categorywarn]" value="{$ticket.categorywarn}">
+				{/if}
 				{foreach $categories as $category}
 					<label class="nobr">
 						<INPUT type="checkbox" name="ticket[categories][{$category.id}]" value="1" {if $category.checked > 0}checked{/if} {tip trigger="categories"}>
@@ -105,10 +107,10 @@
 			{box_row icon="img/mail.gif" label="Notify users:" labelid="notify"}
 				<INPUT type="checkbox" name="ticket[notify]" id="notify" value="1"{if $ticket.notify} CHECKED{/if}>
 			{/box_row}
-
+			{/block}
 		{/box_panel}
 		{box_panel}
-
+			{block name="rtticketmodify-rightcolumn"}
 			{box_row icon="img/users.gif" label="Owner:"}
 				<SELECT size="1" name="ticket[owner]" {tip text="Select user" trigger="owner"}>
 					<OPTION value="0">- {trans("select user")} -</OPTION>
@@ -120,6 +122,10 @@
 						{/if}
 					{/foreach}
 				</SELECT>
+				<label>
+					{trans("assign to me")}
+					<input type="checkbox" id="assign-to-me" data-userid="{$layout.logid}">
+				</label>
 			{/box_row}
 
 			{box_row icon="img/verifier.png" label="Verifier:" field_id="rtverifiers"}
@@ -183,8 +189,8 @@
 {/if}
 
 			{$visibility=(!empty($nodes) && $layout.module != 'eventadd')}
-			{box_row id="node-row" icon="img/node.gif" label="Node:" visibility=$visibility}
-				<select id="nodes" name="ticket[nodeid]" {tip text="Select node" trigger="nodeid"}>
+			{box_row class="node-row" icon="img/node.gif" label="Node:" visible=$visibility}
+				<select class="node-list" name="ticket[nodeid]" {tip text="Select node" trigger="nodeid"}>
 					<option value="">{trans("- none -")}</option>
 					{if !empty($nodes)}
 						{foreach $nodes as $node}
@@ -234,7 +240,7 @@
 				{/foreach}
 			{/box_row}
 			{/if}
-
+			{/block}
 {/box_panel}
 	{/box_contents}
 
@@ -247,14 +253,4 @@
 	{/if}
 {/box_container}
 
-<script>
-
-	$('[name="ticket[requestor_userid]').change(function() {
-		if ($(this).val() == '0') {
-			$('.indicated-person').show();
-		} else {
-			$('.indicated-person').hide();
-		}
-	}).change();
-
-</script>
+<script src="js/templates/rt/rtticketmodify.js"></script>

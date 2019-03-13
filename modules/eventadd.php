@@ -44,7 +44,7 @@ if(isset($_POST['event']))
 
 	if (!isset($event['usergroup']))
 		$event['usergroup'] = 0;
-	$SESSION->save('eventgid', $event['usergroup']);
+//	$SESSION->save('eventgid', $event['usergroup']);
 
 	if ($event['title'] == '')
 		$error['title'] = trans('Event title is required!');
@@ -282,9 +282,8 @@ if(isset($_POST['event']))
 		$eventid = $LMS->EventAdd($event);
 
 		$event['id'] = $eventid;
-        $nodedata = $LMS->ExecHook('event_add_after', $event);
 
-		$hook_data = $LMS->executeHook('event_after_submit',
+		$hook_data = $LMS->executeHook('eventadd_after_submit',
 			array(
 				'event' => $event,
 				'ticket' => $ticket,
@@ -400,7 +399,8 @@ if (!isset($_GET['ticketid']))
 $usergroups = $DB->GetAll('SELECT id, name FROM usergroups');
 
 if (!isset($event['usergroup']))
-	$SESSION->restore('eventgid', $event['usergroup']);
+	$event['usergroup'] = -2;
+	//$SESSION->restore('eventgid', $event['usergroup']);
 
 if (!ConfigHelper::checkConfig('phpui.big_networks'))
 	$SMARTY->assign('customerlist', $LMS->GetAllCustomerNames());

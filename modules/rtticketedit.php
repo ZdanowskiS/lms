@@ -234,6 +234,9 @@ if ($id && !isset($_POST['ticket'])) {
     }
 }
 
+$allow_empty_categories = ConfigHelper::checkConfig('phpui.helpdesk_allow_empty_categories');
+$empty_category_warning = ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.helpdesk_empty_category_warning', true));
+
 $ticket = $LMS->GetTicketContents($id);
 $categories = $LMS->GetUserCategories(Auth::GetCurrentUser());
 if (empty($categories))
@@ -280,8 +283,13 @@ if(isset($_POST['ticket']))
 		}
 	};
 
-	if(!count($ticketedit['categories']))
-		$error['categories'] = trans('You have to select category!');
+	if (empty($ticketedit['categories']) && (!$allow_empty_categories || (empty($ticketedit['categorywarn']) && $empty_category_warning))) {
+		if ($allow_empty_categories) {
+			$ticketedit['categorywarn'] = 1;
+			$error['categories'] = trans('Category selection is recommended but not required!');
+		} else
+			$error['categories'] = trans('You have to select category!');
+	}
 
 	if(($LMS->GetUserRightsRT(Auth::GetCurrentUser(), $ticketedit['queue']) & 2) != 2)
 		$error['queue'] = trans('You have no privileges to this queue!');
@@ -309,6 +317,17 @@ if(isset($_POST['ticket']))
 			$error['requestor_name'] = $error['requestor_mail'] = $error['requestor_phone'] =
 				trans('At least requestor name, mail or phone should be filled!');
 	}
+
+	$hook_data = $LMS->executeHook(
+		'ticketedit_validation_before_submit', 
+		 array(
+				'ticketedit' => $ticketedit,
+	            'error' => $error
+	          )
+	     );
+
+	$ticketedit = $hook_data['ticketedit'];
+	$error = $hook_data['error'];
 
 	if(!$error)
 	{
@@ -340,6 +359,14 @@ if(isset($_POST['ticket']))
 			'parentid' => empty($ticketedit['parentid']) ? null : $ticketedit['parentid'],
 		);
 		$LMS->TicketChange($ticketedit['ticketid'], $props);
+
+	    $hook_data = $LMS->executeHook(
+	    	'ticketedit_after_submit',
+	        	array(
+	            		'ticketedit' => $ticketedit,
+	                 )
+	            );
+	   $ticketedit = $hook_data['ticketedit'];
 
 		// przy zmianie kolejki powiadamiamy o "nowym" zgloszeniu
 		$newticket_notify = ConfigHelper::checkConfig('phpui.newticket_notify');
@@ -454,8 +481,12 @@ if(isset($_POST['ticket']))
 	$ticket['requestor_mail'] = $ticketedit['requestor_mail'];
 	$ticket['requestor_phone'] = $ticketedit['requestor_phone'];
 	$ticket['parentid'] = $ticketedit['parentid'];
-} else
+	$ticket['categorywarn'] = $ticketedit['categorywarn'];
+} else {
 	$ticketedit['categories'] = $ticket['categories'];
+
+	$ticketedit['categorywarn'] = 0;
+}
 
 $ncategories = array();
 foreach ($categories as $category) {
@@ -484,7 +515,7 @@ if (!empty($ticket['customerid']))
 	$SMARTY->assign('nodes', $LMS->GetNodeLocations($ticket['customerid'],
 		isset($ticket['address_id']) && intval($ticket['address_id']) > 0 ? $ticket['address_id'] : null));
 
-$netnodelist = $LMS->GetNetNodeList(array(), 'name');
+$netnodelist = $LMS->GetNetNodeList(array('short' => true), 'name');
 unset($netnodelist['total']);
 unset($netnodelist['order']);
 unset($netnodelist['direction']);
@@ -498,10 +529,20 @@ if (isset($ticket['netnodeid']) && !empty($ticket['netnodeid']))
 	$search = array('netnode' => $ticket['netnodeid']);
 else
 	$search = array();
+$search['short'] = true;
 $netdevlist = $LMS->GetNetDevList('name', $search);
 unset($netdevlist['total']);
 unset($netdevlist['order']);
 unset($netdevlist['direction']);
+
+$hook_data = $LMS->executeHook(
+    'ticketedit_before_display', 
+    array(
+        'ticket' => $ticket,
+        'smarty' => $SMARTY
+    )
+);
+$ticket = $hook_data['ticket'];
 
 $SMARTY->assign('ticket', $ticket);
 $SMARTY->assign('customerid', $ticket['customerid']);
