@@ -1,0 +1,46 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/info.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$templateinfo.name}
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD width="1%">
+			<img src="img/desc.gif" alt="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Template:")}</B>
+		</TD>
+		<TD width="98%">
+			<TABLE width="80%" CELLPADDING="5">
+				<TR>
+					<TD CLASS="fall superlight">
+						{$templateinfo.template|replace:"\n":"<BR>"}
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+				<A href="?m=hdtemplateedit&amp;id={$templateinfo.id}" ACCESSKEY="E">{trans("Edit")} <IMG src="img/edit.gif" alt="{trans("Edit")}"></A>
+				<A href="?m=hdtemplatedel&amp;id={$templateinfo.id}">{trans("Delete")} <img src="img/delete.gif" alt="{trans("Delete")}"></A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

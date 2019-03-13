@@ -1,0 +1,26 @@
+{block name="rtmessageadd-content" prepend}
+<script type="text/javascript">
+
+function itemmy($item) {
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.open("POST", "?m=hdtemplateget&ajax=1&id="+$item.value+"&customerid="
++document.getElementsByName("message[customerid]")[0].value, true);
+	xhttp.send();
+	xhttp.onreadystatechange = function() {
+		if(this.responseText.length>0){
+			document.getElementsByName("message[body]")[0].value=this.responseText;
+		}
+	}
+}
+
+</script>
+{box_row icon="img/info.gif" label="Templates:" labelid="template"}
+	<SELECT SIZE="1" name="message[template]" id="template" onChange="itemmy(this)" {tip text="Select status" trigger="template"}>
+		<option value="-1"{if $message.state == -1} selected{/if}>{trans("- no changes -")}</option>
+		{foreach $templates as $idx => $temp}
+			<OPTION value="{$idx}"{if $message.template == $idx} selected{/if}>{$temp.name} </OPTION>
+		{/foreach}
+	</SELECT>
+{/box_row}
+{/block}

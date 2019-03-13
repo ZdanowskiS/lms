@@ -1,0 +1,43 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="templateedit" ID="templateedit" METHOD="POST" ACTION="?m=hdtemplateedit&id={$templatedata.id}">
+<INPUT type="hidden" name="templateedit[id]" value="{$templatedata.id}">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/info.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			<INPUT TYPE="TEXT" NAME="templateedit[name]" VALUE="{$templatedata.name}" MAXLENGTH="32" size="30" {tip text="Enter name" trigger="name" bold=1}>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD width="1%">
+			<img src="img/desc.gif" alt="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Template:")}</B>
+		</TD>
+		<TD width="98%">
+			<TEXTAREA name="templateedit[template]" cols="65" rows="6" {tip text="Enter template" trigger="template"}>{$templatedata.template|escape}</TEXTAREA>
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+			<A href="javascript:document.templateedit.submit();" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></A>
+			<A href="?m=templateinfo&amp;id={$itemdata.id}">{trans("Cancel")} <img src="img/cancel.gif" alt=""></A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

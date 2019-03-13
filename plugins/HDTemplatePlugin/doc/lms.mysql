@@ -1,0 +1,11 @@
+
+-- hdtemplates --
+CREATE TABLE hdtemplates (
+	id int(11) NOT NULL AUTO_INCREMENT,
+	name varchar(64) DEFAULT '' NOT NULL,
+	template text COLLATE utf8_polish_ci,
+	PRIMARY KEY (id),
+	UNIQUE (name)
+) ENGINE=InnoDB;
+
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_HDTemplatePlugin', '2019031300');
