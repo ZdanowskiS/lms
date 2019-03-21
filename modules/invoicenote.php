@@ -49,12 +49,15 @@ if (isset($_GET['id']) && $action == 'init')
 		$nitem['vdiscount']	= str_replace(',', '.', $item['vdiscount']);
 		$nitem['content']		= str_replace(',', '.', $item['content']);
 		$nitem['valuenetto']	= str_replace(',', '.', $item['basevalue']);
-		$nitem['valuebrutto']	= str_replace(',', '.', $item['value']);
+		// if position count is 0 (deleted position) then count value brutto based on value netto and tax value
+		$nitem['valuebrutto']	= str_replace(',', '.',
+			empty($item['count']) ? round(($item['basevalue'] * ($item['taxvalue'] + 100)) / 100, 2) : $item['value']);
 		$nitem['s_valuenetto']	= str_replace(',', '.', $item['totalbase']);
 		$nitem['s_valuebrutto']	= str_replace(',', '.', $item['total']);
 		$nitem['tax']		= isset($taxeslist[$item['taxid']]) ? $taxeslist[$item['taxid']]['label'] : 0;
 		$nitem['taxid']		= $item['taxid'];
 		$nitem['itemid']	= $item['itemid'];
+		$nitem['deleted'] = empty($item['total']);
 		$invoicecontents[$nitem['itemid']] = $nitem;
 	}
 	$invoice['content'] = $invoicecontents;
@@ -86,6 +89,14 @@ if (isset($_GET['id']) && $action == 'init')
 	$cnote['deadline'] = $cnote['cdate'] + $cnote['paytime'] * 86400;
 
 	$cnote['use_current_division'] = true;
+
+	$hook_data = array(
+		'invoice' => $invoice,
+		'cnote' => $cnote,
+	);
+	$hook_data = $LMS->ExecuteHook('invoicenote_init', $hook_data);
+	$invoice = $hook_data['invoice'];
+	$cnote = $hook_data['cnote'];
 
 	$SESSION->save('cnote', $cnote);
 	$SESSION->save('invoice', $invoice);
@@ -215,6 +226,8 @@ switch($action)
 		if (empty($contents) || empty($cnote))
 			break;
 
+		$error = array();
+
 		$SESSION->restore('invoiceid', $invoice['id']);
 
 		if (!ConfigHelper::checkPrivilege('invoice_consent_date'))
@@ -266,10 +279,17 @@ switch($action)
 				$contents[$idx]['count'] = f_round(-1 * $invoicecontents[$idx]['count'], 3);
 			} elseif ($contents[$idx]['count'] != $item['count']
 				|| $contents[$idx]['valuebrutto'] != $item['valuebrutto']) {
-				$contents[$idx]['valuebrutto'] = f_round($contents[$idx]['valuebrutto'] - $invoicecontents[$idx]['valuebrutto']);
+
+				// determine new brutto value only if invoice position is NOT recovered/restored
+				if (!empty($invoicecontents[$idx]['count']) || empty($contents[$idx]['count']))
+					$contents[$idx]['valuebrutto'] = f_round($contents[$idx]['valuebrutto'] - $invoicecontents[$idx]['valuebrutto']);
+
 				$contents[$idx]['count'] = f_round($contents[$idx]['count'] - $invoicecontents[$idx]['count'], 3);
 				if (empty($contents[$idx]['count']))
 					$contents[$idx]['cash'] = f_round(-1 * $contents[$idx]['valuebrutto'] * $invoicecontents[$idx]['count'], 2);
+				elseif (empty($invoicecontents[$idx]['count']) && !empty($contents[$idx]['count']))
+					// cash value for recovered/restored invoice position
+					$contents[$idx]['cash'] = f_round(-1 * $contents[$idx]['valuebrutto'], 2);
 				elseif (empty($contents[$idx]['valuebrutto']))
 					$contents[$idx]['cash'] = f_round(-1 * $invoicecontents[$idx]['valuebrutto'] * $contents[$idx]['count'], 2);
 				else
@@ -285,6 +305,17 @@ switch($action)
 		}
 
 		$cnote['paytime'] = round(($cnote['deadline'] - $cnote['cdate']) / 86400);
+
+		$hook_data = array(
+			'invoice' => $invoice,
+			'contents' => $contents,
+		);
+		$hook_data = $LMS->ExecuteHook('invoicenote_save_validation', $hook_data);
+		if (isset($hook_data['error']) && is_array($hook_data['error']))
+			$error = array_merge($error, $hook_data['error']);
+
+		if (!empty($error))
+			break;
 
 		$DB->BeginTrans();
 		$DB->LockTables(array('documents', 'numberplans', 'divisions', 'vdivisions'));
@@ -458,6 +489,12 @@ switch($action)
 			}
 		}
 
+		$hook_data = array(
+			'invoice' => $invoice,
+			'contents' => $contents,
+		);
+		$hook_data = $LMS->ExecuteHook('invoicenote_save_after_submit', $hook_data);
+
 		$DB->CommitTrans();
 
 		$SESSION->remove('invoice');
@@ -485,6 +522,14 @@ if ($action != '')
 	// redirect, to not prevent from invoice break with the refresh
 	$SESSION->redirect('?m=invoicenote');
 }
+
+$hook_data = array(
+	'contents' => $contents,
+	'invoice' => $invoice,
+);
+$hook_data = $LMS->ExecuteHook('invoicenote_before_display', $hook_data);
+$contents = $hook_data['contents'];
+$invoice = $hook_data['invoice'];
 
 $SMARTY->assign('error', $error);
 $SMARTY->assign('contents', $contents);

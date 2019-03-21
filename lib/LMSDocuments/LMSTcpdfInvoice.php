@@ -625,7 +625,10 @@ class LMSTcpdfInvoice extends LMSInvoice {
 				'cdate' => $this->data['invoice']['cdate'],
 				'customerid' => $this->data['customerid'],
 			));
-			$title = trans('for Invoice No. $a', $docnumber);
+			if ($this->data['invoice']['doctype'] == DOC_CNOTE)
+				$title = trans('for Credit Note No. $a', $docnumber);
+			else
+				$title = trans('for Invoice No. $a', $docnumber);
 			$this->backend->Write(0, $title, '', 0, 'C', true, 0, false, false, 0);
 		}
 
@@ -780,7 +783,7 @@ class LMSTcpdfInvoice extends LMSInvoice {
 					$this->backend->SetTextColorArray(array(255, 0, 0));
 			$this->backend->writeHTMLCell(0, 0, '', 17, trans('Deadline:') . '<b>' . date("d.m.Y", $this->data['pdate']) . '</b>', 0, 1, 0, true, 'R');
 			if ($this->use_alert_color)
-					$this->backend->SetTextColorArray();
+					$this->backend->SetTextColor();
 		}
 		if (!ConfigHelper::checkConfig('invoices.hide_payment_type'))
 			$this->backend->writeHTMLCell(0, 0, '', '', trans('Payment type:') . '<b>' . $this->data['paytypename'] . '</b>', 0, 1, 0, true, 'R');
@@ -934,8 +937,10 @@ class LMSTcpdfInvoice extends LMSInvoice {
 			$this->backend->setSignature($cert, $key, 'lms-invoices', '', 1, $info);
 			$this->backend->setSignatureAppearance(13, 10, 50, 20);
 		}
-		if (!$this->data['disable_protection'])
-			$this->backend->SetProtection(array('modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble'), '', 'PASSWORD_CHANGEME', '1');
+
+		if (!$this->data['disable_protection'] && $this->data['protection_password'])
+			$this->backend->SetProtection(array('modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble'),
+				'', $this->data['protection_password'], 1);
 	}
 
 	public function invoice_body_ft0100() {
@@ -999,8 +1004,10 @@ class LMSTcpdfInvoice extends LMSInvoice {
 			$this->backend->setSignature($cert, $key, 'lms-invoices', '', 1, $info);
 			$this->backend->setSignatureAppearance(13, 10, 50, 20);
 		}
-		if (!$this->data['disable_protection'])
-			$this->backend->SetProtection(array('modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble'), '', 'PASSWORD_CHANGEME', '1');
+
+		if (!$this->data['disable_protection'] && $this->data['protection_password'])
+			$this->backend->SetProtection(array('modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble'),
+				'', $this->data['protection_password'], 1);
 	}
 }
 

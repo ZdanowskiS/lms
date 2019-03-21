@@ -5,8 +5,6 @@
  *
  *  (C) Copyright 2001-2019 LMS Developers
  *
- *  Please, see the doc/AUTHORS for more information about authors!
- *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License Version 2 as
  *  published by the Free Software Foundation.
@@ -21,25 +19,15 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
  *  USA.
  *
- *  $Id$
  */
 
-$id = intval($_GET['id']);
+$this->BeginTrans();
 
-if ($id && $_GET['is_sure'] == '1') {
-	if ($LMS->isDocumentPublished($id) && !ConfigHelper::checkPrivilege('published_document_modification'))
-		return;
+$this->Execute("INSERT INTO uiconfig (section, var, value)
+	VALUES (?, ?, ?)", array('userpanel', 'hide_documentbox', '0'));
 
-	if ($LMS->isDocumentReferenced($_GET['id']))
-		return;
+$this->Execute("UPDATE dbinfo SET keyvalue = ? WHERE keytype = ?", array('2019032100', 'dbversion'));
 
-	$hook_data = $LMS->executeHook('invoicedel_before_delete', array(
-		'id' => $id,
-	));
-	if (!isset($hook_data['continue']) || !empty($hook_data['continue']))
-		$LMS->InvoiceDelete($id);
-}
-
-$SESSION->redirect($_SERVER['HTTP_REFERER']);
+$this->CommitTrans();
 
 ?>

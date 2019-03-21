@@ -227,7 +227,11 @@ class LMSEzpdfInvoice extends LMSInvoice {
 				'cdate' => $this->data['invoice']['cdate'],
 				'customerid' => $this->data['customerid'],
 			));
-			$y = $y - $this->backend->text_align_left($x,$y,$font_size,'<b>' . trans('for Invoice No. $a',$tmp) . '</b>');
+			if ($this->data['invoice']['doctype'] == DOC_CNOTE)
+				$y = $y - $this->backend->text_align_left($x,$y,$font_size,'<b>' . trans('for Credit Note No. $a',$tmp) . '</b>');
+			else
+				$y = $y - $this->backend->text_align_left($x,$y,$font_size,'<b>' . trans('for Invoice No. $a',$tmp) . '</b>');
+
 			$y -= 5;
 		}
 
@@ -997,6 +1001,10 @@ class LMSEzpdfInvoice extends LMSInvoice {
 		$this->backend->check_page_length($top);
 		$this->invoice_footnote(30, $top, 530, 10);
 		$page = $this->backend->ezStopPageNumbers(1, 1, $page);
+
+		if (!$this->data['disable_protection'] && $this->data['protection_password'])
+			$this->backend->setEncryption('', $this->data['protection_password'],
+				array('modify', 'copy', 'fill', 'extract', 'assemble'), 2);
 	}
 
 	public function invoice_body_ft0100() {
@@ -1033,6 +1041,10 @@ class LMSEzpdfInvoice extends LMSInvoice {
 			$this->invoice_simple_form_fill(14, 3, 0.4);
 		}
 		$page = $this->backend->ezStopPageNumbers(1,1,$page);
+
+		if (!$this->data['disable_protection'] && $this->data['protection_password'])
+			$this->backend->setEncryption('', $this->data['protection_password'],
+				array('modify', 'copy', 'fill', 'extract', 'assemble'), 2);
 	}
 }
 

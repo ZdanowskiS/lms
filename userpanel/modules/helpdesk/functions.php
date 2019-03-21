@@ -88,8 +88,10 @@ function module_main() {
 
 	$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
+	$files = array();
+	$attachments = array();
+
 	if (isset($_FILES['files'])) {
-		$files = array();
 		foreach ($_FILES['files']['name'] as $fileidx => $filename)
 			if (!empty($filename)) {
 				if (is_uploaded_file($_FILES['files']['tmp_name'][$fileidx]) && $_FILES['files']['size'][$fileidx]) {
@@ -104,7 +106,12 @@ function module_main() {
 						'name' => $filename,
 						'tmp_name' => $_FILES['files']['tmp_name'][$fileidx],
 						'type' => $_FILES['files']['type'][$fileidx],
-						'contents' => $filecontents,
+						'contents' => &$filecontents,
+					);
+					$attachments[] = array(
+						'content_type' => $_FILES['files']['type'][$fileidx],
+						'filename' => $filename,
+						'data' => &$filecontents,
 					);
 				} else { // upload errors
 					if (isset($error['files']))
@@ -255,6 +262,7 @@ function module_main() {
 					'mail_headers' => $headers,
 					'mail_body' => $body,
 					'sms_body' => $sms_body,
+					'attachments' => $attachments,
 				));
 			}
 
@@ -380,6 +388,7 @@ function module_main() {
 				'priority' => $RT_PRIORITIES[$ticketdata['priority']],
 				'subject' => $ticket['subject'],
 				'body' => $ticket['body'],
+				'attachments' => &$attachments,
 			);
 
 			// try to use LMS url from userpanel configuration
@@ -398,6 +407,7 @@ function module_main() {
 				'mail_headers' => $headers,
 				'mail_body' => $body,
 				'sms_body' => $sms_body,
+				'attachments' => &$attachments,
 			));
 
 			header('Location: ?m=helpdesk&op=view&id='.$ticket['id']);
@@ -408,6 +418,29 @@ function module_main() {
 			$SMARTY->assign('helpdesk', $helpdesk);
 			$_GET['op'] = 'message';
 		}
+	} else
+		$SMARTY->assign('helpdesk', array());
+
+	$unit_multipliers = array(
+		'K' => 1024,
+		'M' => 1024 * 1024,
+		'G' => 1024 * 1024 * 1024,
+		'T' => 1024 * 1024 * 1024 * 1024,
+	);
+	foreach (array('post_max_size', 'upload_max_filesize') as $var) {
+		preg_match('/^(?<number>[0-9]+)(?<unit>[kKmMgGtT]?)$/', ini_get($var), $m);
+		$unit_multiplier = isset($m['unit']) ? $unit_multipliers[strtoupper($m['unit'])] : 1;
+		if ($var == 'post_max_size')
+			$unit_multiplier *= 1/1.33;
+		if (empty($m['number'])) {
+			$val['bytes'] = 0;
+			$val['text'] = trans('(unlimited)');
+		} else {
+			$val['bytes'] = round($m['number'] * $unit_multiplier);
+			$res = setunits($val['bytes']);
+			$val['text'] = round($res[0]) . ' ' . $res[1];
+		}
+		$SMARTY->assign($var, $val);
 	}
 
 	if (isset($_GET['op']) && $_GET['op'] == 'view') {
