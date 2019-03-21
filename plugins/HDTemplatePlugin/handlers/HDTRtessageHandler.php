@@ -8,8 +8,7 @@ class HDTRtessageHandler {
 
 		$SMARTY = $hook_data['smarty'];
 
-		#require_once(PLUGINS_DIR . '/' . RadiusPlugin::plugin_directory_name . '/modules/radiusnodereload.inc.php');
-		$SMARTY->assign('templates', $HDT->GetTemplateNames());
+		$SMARTY->assign('templates', $HDT->GetTemplateNames(HDT_TYPE_MESSAGE));
 
 		return $hook_data;
 	}

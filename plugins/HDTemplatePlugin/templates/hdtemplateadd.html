@@ -21,6 +21,21 @@
     <TBODY>
 	<TR>
 		<TD width="1%">
+			<img src="img/producer.gif" alt="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Type:")}</B>
+		</TD>
+		<TD width="98%">
+			<SELECT size="1" name="templateadd[type]" {tip text="Select attribute type"}>
+				{foreach from=$_HDTTYPES key=key item=item}{
+           		<OPTION value="{$key}"{if $templateadd.type == $key} SELECTED{/if}>{$item}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD width="1%">
 			<img src="img/desc.gif" alt="">
 		</TD>
 		<TD width="1%">

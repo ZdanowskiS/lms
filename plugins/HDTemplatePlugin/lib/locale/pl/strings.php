@@ -3,7 +3,12 @@
 $_LANG['Display this form again, when this template is saved'] = 'Pokaż ten formularz ponownie do dodaniu szablonu';
 
 $_LANG['Enter template'] = 'Wprowadź szablon';
+$_LANG['Mr./Ms.'] = 'Pani/Panie';
+$_LANG['Mr.'] = 'Panie';
+$_LANG['Ms.'] = 'Pani';
+
 $_LANG['New Template'] = 'Nowy szablon';
+$_LANG['no term'] = 'bez terminowa';
 
 $_LANG['Templates:'] = 'Szablony:';
 $_LANG['Template Edit: $a'] = 'Edycja szablonu: $a';

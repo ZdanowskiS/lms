@@ -30,6 +30,8 @@ if(isset($_POST['templateedit']))
 
     if(!$error){
 		$HDT->UpdateTemplate($templateedit);
+
+			$SESSION->redirect('?m=hdtemplateinfo&id='.$id);
 	}
 
 	$templatedata = $templateedit;

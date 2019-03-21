@@ -18,8 +18,9 @@ class HDT {
 #template
 	public function AddTemplate($data)
 	{
-		$this->db->Execute('INSERT INTO hdtemplates(name, template) VALUES(?, ?)',
+		$this->db->Execute('INSERT INTO hdtemplates(name, type, template) VALUES(?,?, ?)',
 					array($data['name'],
+							$data['type'],
 							$data['template']));
 
 		return $this->db->GetLastInsertID('hdtemplates');
@@ -27,23 +28,24 @@ class HDT {
 
 	public function UpdateTemplate($data)
 	{
-		$this->db->execute('UPDATE hdtemplates SET name=?, template=? WHERE id=?',
+		$this->db->execute('UPDATE hdtemplates SET name=?, type=?, template=? WHERE id=?',
 						array($data['name'],
+							$data['type'],
 							$data['template'],
 							$data['id']));
-
 		return;
 	}
 
 	public function GetTemplateInfo($id)
 	{
-		return $this->db->GetRow('SELECT id, name, template FROM hdtemplates WHERE id=?',
+		return $this->db->GetRow('SELECT id, name, type, template FROM hdtemplates WHERE id=?',
 						array($id));
 	}
 
-	public function GetTemplateNames()
+	public function GetTemplateNames($type=null)
 	{
-		$result=$this->db->GetAllByKey('SELECT id, name FROM hdtemplates', 'id');
+		$result=$this->db->GetAllByKey('SELECT id, name FROM hdtemplates' 
+										.($type ? ' WHERE type='.$type.' OR type=0' : ''), 'id');
 
 		return $result;
 	}
@@ -73,6 +75,40 @@ class HDT {
 		$template = preg_replace('/%balance/', $customer['balance'], $template);
 		$template = preg_replace('/%bankaccount/', $customer['bankaccount'], $template);
 		$template = preg_replace('/%customername/', $customer['customername'], $template);
+
+		if (strpos($template, '%last_assignment_to') !== false) {
+
+			$lastdate=$this->db->GetOne('SELECT dateto FROM assignments WHERE customerid=? ORDER BY dateto DESC',
+						array($customerid));
+
+			if($lastdate)
+				$lastdate=date('Y/m/d ', $lastdate);
+			else
+				$lastdate=trans("no term");
+			$template = preg_replace('/%last_assignment_to/', $lastdate, $template);
+		}
+
+		if (strpos($template, '%last_assignment_name') !== false) {
+			$name=$this->db->GetOne('SELECT (CASE WHEN a.liabilityid IS NULL THEN t.name ELSE l.name END) AS name 
+						FROM assignments a 
+							LEFT JOIN tariffs t ON (a.tariffid = t.id)
+							LEFT JOIN liabilities l ON (a.liabilityid = l.id)
+					WHERE a.customerid=? ORDER BY a.dateto DESC',array($customerid));
+
+			$template = preg_replace('/%last_assignment_name/', $name, $template);
+		}
+		$sex=trans('Mr./Ms.');
+		if($customer['ssn'])
+		{
+			if(substr($customer['ssn'], 9, 1)==0 || ($customer['ssn'][9] % 2) == 0){
+				 $sex=trans('Ms.');
+    		} 
+			else{
+				 $sex=trans('Mr.');
+			}
+				
+		}
+		$template = preg_replace('/%salutation/',$sex, $template);
 
 		return $template;
 	}

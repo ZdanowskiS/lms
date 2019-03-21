@@ -37,6 +37,10 @@ class HDTemplatePlugin extends LMSPlugin {
 				'class' => 'HDTRtessageHandler',
 				'method' => 'rtmessageaddBeforeSubmit'
 			),
+			'ticketadd_before_display' => array(
+				'class' => 'HDTRTticketHandler',
+				'method' => 'ticketaddBeforeSubmit'
+			),
 		);
 	 }
 
