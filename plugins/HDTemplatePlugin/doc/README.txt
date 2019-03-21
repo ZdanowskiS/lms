@@ -14,7 +14,7 @@ W podmenu Helpdesk można dodać szablon wiadomości zawierający słowa kluczow
 -%customername
 -%last_assignment_to - data data końcowa ostatniej usługi
 -%last_assignment_name - nazwa ostatniej usługi
--%salutation - Na pazie nr pesel podstawia  Pani/Panie
+-%salutation - Na bazie nr pesel podstawia  Pani/Panie (Szanowny Panie....)
 
 *Lista szablonów
 Lista dodanych pozycji z możliwością edycji i kasowania. Szablony moga być przeznaczone tylko dla nowych zgłoszeń,
