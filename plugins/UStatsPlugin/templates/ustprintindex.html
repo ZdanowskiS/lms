@@ -1,0 +1,75 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM method="post" name="activitylist" id="activitylist" action="?m=ustprint&amp;type=stats" target="_blank">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD width="1%">
+			<IMG src="img/ticket.gif" alt="">
+		</TD>
+		<TD width="99%">
+			<B>{trans("User Activity Reports")}</B>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD width="100%" colspan="2">
+			<TABLE width="100%">
+                                <TR>
+                                        <TD style="width: 1%;">
+						<IMG src="img/calendar.gif" alt="">
+					</TD>
+					<TD width="1%" nowrap>
+						<span class="bold">{trans("Period:")} </span>
+					</TD>
+					<TD class="nobr" colspan="8">
+                                                <label>
+                                                	{trans("From:")}
+                                                	<input type="text" size="10" name="datefrom" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>&nbsp;
+                                                </label>
+                                                <label>
+                                                	{trans("To:")}
+                                                	<input type="text" size="10" name="dateto" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="dateto"}>&nbsp;
+                                                </label>
+                                        </TD>
+				</TR>
+				<TR>
+					<TD class="bold nobr">
+						<IMG src="img/home.gif" alt="">
+					</TD>
+					<TD class="bold nobr">
+						{trans("Order By:")}
+					</TD>
+					<TD class="nobr" colspan="8">
+						<SELECT size="1" name="sort" {tip text="Select what to sort by"}>
+							<OPTION value="name">{trans("Name")}</OPTION>
+							<OPTION value="position">{trans("Position")}</OPTION>
+							<OPTION value="messages">{trans("New Messages")}</OPTION>
+							<OPTION value="tickets">{trans("New Ticket")}</OPTION>
+							<OPTION value="ownerevents">{trans("New Event")}</OPTION>
+							<OPTION value="closedevents">{trans("Closed Events")}</OPTION>
+							<OPTION value="closedassignedevents">{trans("Closed Assigned Events")}</OPTION>
+						</SELECT>
+						<SELECT size="1" name="direction" {tip text="Select sort direction"}>
+							<OPTION value="desc">{trans("desc")}</OPTION>
+							<OPTION value="asc">{trans("asc")}</OPTION>
+						</SELECT>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD width="100%" colspan="2" align="right">
+			<A href="javascript:document.activitylist.submit();"><IMG src="img/print.gif" alt="" hspace="2"> {trans("Print")}</A>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+</FORM>
+{/block}

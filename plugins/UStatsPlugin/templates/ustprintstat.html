@@ -1,0 +1,97 @@
+{include file="clearheader.html"}
+<!--// $Id$ //-->
+<TABLE WIDTH="100%">
+	<TR>
+		<TD WIDTH="99%" VALIGN="TOP">
+			<H1>{$layout.pagetitle}</H1>
+		</TD>
+		<TD WIDTH="1%" ALIGN="RIGHT" NOWRAP>
+			LMS {$layout.lmsv} @ {$layout.hostname}<BR>
+			{$smarty.now|date_format:"%A, %x"}<BR>
+			{t a=$layout.logname}Prepared by: $a{/t}
+		</TD>
+	</TR>
+</TABLE>
+<TABLE WIDTH="700" CELLPADDING="3" BORDER="1" ALIGN="CENTER">
+	<TR>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="1%">
+			<B>{trans("User")}</B>
+		</TD>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="35%">
+			<B>{trans("Name")}</B>
+		</TD>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="10%">
+			<B>{trans("Position")}</B>
+		</TD>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="5%">
+			{trans("New Message")}
+		</TD>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="5%">
+			{trans("New Ticket")}
+		</TD>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="5%">
+			{trans("New Event")}
+		</TD>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="5%">
+			{trans("Closed Events")}
+		</TD>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="15%">
+			{trans("Closed Assigned Events")}
+		</TD>
+
+	</TR>
+	{cycle values="white,grey" print=false}
+	{foreach from=$stats key=userid item=user}
+	<TR class="{cycle}">
+		<TD ALIGN="CENTER">
+			{$userid}
+		</TD>
+		<TD>
+			{$user.name}
+		</TD>
+		<TD>
+			{$user.position}
+		</TD>
+		<TD>
+			{$user.messages}
+		</TD>
+		<TD ALIGN="RIGHT">
+			{$user.tickets}
+		</TD>
+		<TD ALIGN="RIGHT">
+			{$user.ownerevents}
+		</TD>
+		<TD ALIGN="RIGHT">
+			{$user.closedevents}
+		</TD>
+		<TD ALIGN="RIGHT">
+			{$user.closedassignedevents}
+		</TD>
+	</TR>
+	{foreachelse}
+	<TR>
+	        <TD COLSPAN="6" class="empty-table">
+			<p>{trans("No such requests in database.")}</p>
+		</TD>
+	</TR>
+	{/foreach}
+	<TR class="grey">
+		<TD COLSPAN="3" ALIGN="RIGHT"><B>{trans("Total:")}</B></TD>
+		<TD>
+			{$sum.messages}
+		</TD>
+		<TD ALIGN="RIGHT">
+			{$sum.tickets}
+		</TD>
+		<TD ALIGN="RIGHT">
+			{$sum.ownerevents}
+		</TD>
+		<TD ALIGN="RIGHT">
+			{$sum.closedevents}
+		</TD>
+		<TD ALIGN="RIGHT">
+			{$sum.closedassignedevents}
+		</TD>
+	</TR>
+</TABLE>
+{include file="clearfooter.html"}
