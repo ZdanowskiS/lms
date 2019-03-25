@@ -1,0 +1,64 @@
+{include file="clearheader.html"}
+<!--// $Id$ //-->
+<TABLE WIDTH="100%">
+	<TR>
+		<TD WIDTH="99%" VALIGN="TOP">
+			<H1>{$layout.pagetitle}</H1>
+		</TD>
+		<TD WIDTH="1%" ALIGN="RIGHT" NOWRAP>
+			LMS {$layout.lmsv} @ {$layout.hostname}<BR>
+			{$smarty.now|date_format:"%A, %x"}<BR>
+			{t a=$layout.logname}Prepared by: $a{/t}
+		</TD>
+	</TR>
+</TABLE>
+<TABLE WIDTH="700" CELLPADDING="3" BORDER="1" ALIGN="CENTER">
+	<TR>
+		<TD CLASS="HEAD" ALIGN="CENTER" WIDTH="10%">
+			<B>{trans("Day")}</B>
+		</TD>
+	{foreach from=$headers key=k item=header}
+		<TD CLASS="HEAD" ALIGN="CENTER">
+			<B>{$header.from|date_format:"%H:%M"} {$header.to|date_format:"%H:%M"}</B>
+		</TD>
+	{/foreach}
+	</TR>
+
+	{cycle values="white,grey" print=false}
+	{foreach from=$stats key=date item=day}
+	<TR class="{cycle}">
+		<TD ALIGN="CENTER">
+			<TABLE>
+				<TR>
+					<TD rowspan="3">{$date}</TD>
+					<TD>{trans("Messages")}:</TD>
+				</TR>
+				<TR>
+
+					<TD>{trans("Tickets")}:</TD>
+				</TR>
+				<TR>
+					
+					<TD>{trans("Events:")}</TD>
+				</TR>
+			</TABLE>
+		</TD>
+		{foreach from=$day item=stat}	
+		<TD {if $stat.sum<($data.max*0.25)}style="background-color:#00FF00"{elseif $stat.sum>=($data.max*0.75)}style="background-color:#FF0000"{/if}>
+			{$stat.messages}<BR>
+			{$stat.tickets}<BR>
+			{$stat.events}<BR>
+			<B>{$stat.sum}</B>
+		</TD>
+		{/foreach}		
+	</TR>
+	{foreachelse}
+	<TR>
+	        <TD COLSPAN="6" class="empty-table">
+			<p>{trans("No such data in database.")}</p>
+		</TD>
+	</TR>
+	{/foreach}
+
+</TABLE>
+{include file="clearfooter.html"}
