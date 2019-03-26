@@ -108,6 +108,9 @@ switch($type)
 	case 'timestat':
 		$datefrom  = !empty($_GET['datefrom']) ? $_GET['datefrom'] : $_POST['datefrom'];
 		$dateto  = !empty($_GET['dateto']) ? $_GET['dateto'] : $_POST['dateto'];
+		$data['marklow'] = !empty($_GET['marklow']) ? $_GET['marklow'] : $_POST['marklow'];
+		$data['markhigh'] = !empty($_GET['markhigh']) ? $_GET['markhigh'] : $_POST['markhigh'];
+		$data['weekday'] = !empty($_GET['weekday']) ? $_GET['weekday'] : $_POST['weekday'];
 
 		if($datefrom ) {
 			list($year, $month, $day) = explode('/',$datefrom );
@@ -125,38 +128,39 @@ switch($type)
 			$unixto = mktime(23,59,59,$month,$day,$year);
 		}
 
-		#print $unixfrom."<".$unixto."<BR>";
-		#print date('Y/m/d',$unixfrom)." ".date('Y/m/d',$unixto)."<BR>";
 		$max=0;
 		$data['ammount']=0;
 		do{
-			$d=date('Y/m/d',$unixfrom);
-			if(!$stats[$d]){
-				$i=0;
-			}
-			$i++;
-			$data['ammount']++;
-			$headers[$i]['from']=$unixfrom;
-			$headers[$i]['to']=$unixfrom+3600;
+			if(!$data['weekday'] || $data['weekday']==date('N',$unixfrom))
+			{
+				$d=date('Y/m/d',$unixfrom);
+				if(!$stats[$d]){
+					$i=0;
+				}
+				$i++;
+				$data['ammount']++;
+				$headers[$i]['from']=$unixfrom;
+				$headers[$i]['to']=$unixfrom+3600;
 
-			$stats[$d][$i]['messages']=$DB->GetOne('SELECT count(*) FROM rtmessages 
+				$stats[$d][$i]['messages']=$DB->GetOne('SELECT count(*) FROM rtmessages 
 												WHERE createtime>=? AND createtime<?',
 												array($headers[$i]['from'],$headers[$i]['to']));
 
-			$stats[$d][$i]['tickets']=$DB->GetOne('SELECT count(*) FROM rttickets 
+				$stats[$d][$i]['tickets']=$DB->GetOne('SELECT count(*) FROM rttickets 
 												WHERE createtime>=? AND createtime<?',
 												array($headers[$i]['from'],$headers[$i]['to']));
 
-			$stats[$d][$i]['events']=$DB->GetOne('SELECT count(*) FROM events 
+				$stats[$d][$i]['events']=$DB->GetOne('SELECT count(*) FROM events 
 												WHERE creationdate>=? AND creationdate<?',
 												array($headers[$i]['from'],$headers[$i]['to']));
 
-			$stats[$d][$i]['sum']=$stats[$d][$i]['messages']+$stats[$d][$i]['tickets']+$stats[$d][$i]['events'];
+				$stats[$d][$i]['sum']=$stats[$d][$i]['messages']+$stats[$d][$i]['tickets']+$stats[$d][$i]['events'];
 
-			$data['max']=($data['max']>$stats[$d][$i]['sum'] ? $data['max'] : $stats[$d][$i]['sum']);
+				$data['max']=($data['max']>$stats[$d][$i]['sum'] ? $data['max'] : $stats[$d][$i]['sum']);
+			}
 			$unixfrom+=3600;
 
-		}while($unixfrom<$unixto);
+		}while($unixfrom<=$unixto);
 
 		$layout['pagetitle'] = trans('Activity In Time Report');
 

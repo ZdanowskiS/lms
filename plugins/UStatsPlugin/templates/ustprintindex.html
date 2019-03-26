@@ -113,10 +113,43 @@
 						
 					</TD>
 					<TD class="bold nobr">
-					
+						<span class="bold">{trans("Week day:")} </span>
 					</TD>
 					<TD class="nobr" colspan="8">
-
+						<SELECT size="1" name="weekday" {tip text="Select what to sort by"}>
+							<OPTION value="">{trans("all")}</OPTION>
+							<OPTION value="1">{trans("Monday")}</OPTION>
+							<OPTION value="2">{trans("Tuesday")}</OPTION>
+							<OPTION value="3">{trans("Wenesday")}</OPTION>
+							<OPTION value="4">{trans("Thursday")}</OPTION>
+							<OPTION value="5">{trans("Friday")}</OPTION>
+							<OPTION value="6">{trans("Saturday")}</OPTION>
+							<OPTION value="7">{trans("Sunday")}</OPTION>
+						</SELECT>
+					</TD>
+				</TR>
+				<TR>
+					<TD class="bold nobr">
+						
+					</TD>
+					<TD class="bold nobr">
+						<span class="bold">{trans("Mark:")} </span>
+					</TD>
+					<TD class="nobr" colspan="8">
+						{trans("Low:")}
+						<SELECT size="1" name="marklow" {tip text="Select what to sort by"}>
+							<OPTION value="0.5">0.5</OPTION>
+							<OPTION value="0.10">0.10</OPTION>
+							<OPTION value="0.25">0.25</OPTION>
+							<OPTION value="0.50">0.50</OPTION>
+						</SELECT>
+						{trans("High:")}
+						<SELECT size="1" name="markhigh" {tip text="Select what to sort by"}>
+							<OPTION value="0.95">0.95</OPTION>
+							<OPTION value="0.90">0.90</OPTION>
+							<OPTION value="0.75">0.75</OPTION>
+							<OPTION value="0.50">0.50</OPTION>
+						</SELECT>
 					</TD>
 				</TR>
 			</TABLE>

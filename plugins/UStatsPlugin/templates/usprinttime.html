@@ -30,7 +30,8 @@
 		<TD ALIGN="CENTER">
 			<TABLE>
 				<TR>
-					<TD rowspan="3">{$date}</TD>
+					<TD rowspan="4">{$date}<BR>
+						{$date|date_format:"%A"}</TD>
 					<TD>{trans("Messages")}:</TD>
 				</TR>
 				<TR>
@@ -41,14 +42,31 @@
 					
 					<TD>{trans("Events:")}</TD>
 				</TR>
+				<TR>
+					
+					<TD>{trans("Sum:")}</TD>
+				</TR>
 			</TABLE>
 		</TD>
 		{foreach from=$day item=stat}	
-		<TD {if $stat.sum<($data.max*0.25)}style="background-color:#00FF00"{elseif $stat.sum>=($data.max*0.75)}style="background-color:#FF0000"{/if}>
-			{$stat.messages}<BR>
-			{$stat.tickets}<BR>
-			{$stat.events}<BR>
-			<B>{$stat.sum}</B>
+		<TD {if $stat.sum<($data.max*$data.marklow)}style="background-color:#00FF00"
+					{elseif $stat.sum>0 && $stat.sum>=($data.max*$data.markhigh)}style="background-color:#FF0000"{/if}>
+					<TABLE>
+				<TR>
+					<TD>{$stat.messages}</TD>
+				</TR>
+				<TR>
+
+					<TD>{$stat.tickets}</TD>
+				</TR>
+				<TR>
+					
+					<TD>{$stat.events}</TD>
+				</TR>
+				<TR>
+					<TD><B>{$stat.sum|string_format:"%01d"}</B></TD>
+				</TR>
+			</TABLE>
 		</TD>
 		{/foreach}		
 	</TR>
