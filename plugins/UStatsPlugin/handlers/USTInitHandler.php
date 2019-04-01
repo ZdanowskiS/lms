@@ -15,8 +15,8 @@ class USTInitHandler {
 		$hook_data->setTemplateDir($template_dirs);
 
 		$SMARTY = $hook_data;
-		#require_once(PLUGINS_DIR . DIRECTORY_SEPARATOR . USTPlugin::plugin_directory_name . DIRECTORY_SEPARATOR
-		#	. 'lib' . DIRECTORY_SEPARATOR . 'definitions.php');
+		require_once(PLUGINS_DIR . DIRECTORY_SEPARATOR . UStatsPlugin::plugin_directory_name . DIRECTORY_SEPARATOR
+			. 'lib' . DIRECTORY_SEPARATOR . 'definitions.php');
 
 		return $hook_data;
 	}
@@ -35,7 +35,7 @@ class USTInitHandler {
 
 	public function menuInit(array $hook_data = array()) {
 
-		$hook_data['admin']['submenu']= array_merge($hook_data['helpdesk']['submenu'], array( 1 => array(
+		$hook_data['admin']['submenu']= array_merge($hook_data['admin']['submenu'], array( 1 => array(
 						'name' => trans('User Report'),
 						'link' => '?m=ustprint',
 						'tip' => trans('User Status'),
