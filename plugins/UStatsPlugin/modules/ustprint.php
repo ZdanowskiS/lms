@@ -112,6 +112,12 @@ switch($type)
 		$data['markhigh'] = !empty($_GET['markhigh']) ? $_GET['markhigh'] : $_POST['markhigh'];
 		$data['weekday'] = !empty($_GET['weekday']) ? $_GET['weekday'] : $_POST['weekday'];
 
+		$data['messages'] = !empty($_GET['messages']) ? $_GET['messages'] : $_POST['messages'];
+		$data['tickets'] = !empty($_GET['tickets']) ? $_GET['tickets'] : $_POST['tickets'];
+		$data['events'] = !empty($_GET['events']) ? $_GET['events'] : $_POST['events'];
+		$data['cdisplay'] = !empty($_GET['cdisplay']) ? $_GET['cdisplay'] : $_POST['cdisplay'];
+		$data['addassignment'] = !empty($_GET['addassignment']) ? $_GET['addassignment'] : $_POST['addassignment'];
+
 		if($datefrom ) {
 			list($year, $month, $day) = explode('/',$datefrom );
 			$unixfrom = mktime(0,0,0,$month,$day,$year);
@@ -128,6 +134,18 @@ switch($type)
 			$unixto = mktime(23,59,59,$month,$day,$year);
 		}
 
+		$data['rows']=1;
+
+		if($data['messages'])
+			$data['rows']++;
+		if($data['tickets'])
+			$data['rows']++;
+		if($data['events'])
+			$data['rows']++;
+		if($data['cdisplay'])
+			$data['rows']++;
+		if($data['addassignment'])
+			$data['rows']++;
 		$max=0;
 		$data['ammount']=0;
 		do{
@@ -142,19 +160,34 @@ switch($type)
 				$headers[$i]['from']=$unixfrom;
 				$headers[$i]['to']=$unixfrom+3600;
 
+				if($data['messages'])
 				$stats[$d][$i]['messages']=$DB->GetOne('SELECT count(*) FROM rtmessages 
 												WHERE createtime>=? AND createtime<?',
 												array($headers[$i]['from'],$headers[$i]['to']));
-
+				if($data['tickets'])
 				$stats[$d][$i]['tickets']=$DB->GetOne('SELECT count(*) FROM rttickets 
 												WHERE createtime>=? AND createtime<?',
 												array($headers[$i]['from'],$headers[$i]['to']));
-
+				if($data['events'])
 				$stats[$d][$i]['events']=$DB->GetOne('SELECT count(*) FROM events 
 												WHERE creationdate>=? AND creationdate<?',
 												array($headers[$i]['from'],$headers[$i]['to']));
+				if($data['cdisplay'])
+				$stats[$d][$i]['cdisplay']=$DB->GetOne('SELECT count(*) FROM  ust_log
+											WHERE cdate>=? AND cdate<? AND action=?',
+										array($headers[$i]['from'],
+												$headers[$i]['to'],
+												UST_CUSTOMER_DISPLAY));
+				if($data['addassignment'])
+				$stats[$d][$i]['addassignment']=$DB->GetOne('SELECT count(*) FROM logtransactions t 
+												JOIN logmessages m ON (t.id=m.transactionid)
+													WHERE time>=? AND time<? AND resource=? AND operation=?',
+												array($headers[$i]['from'],
+														$headers[$i]['to'],
+														2,
+														1));
 
-				$stats[$d][$i]['sum']=$stats[$d][$i]['messages']+$stats[$d][$i]['tickets']+$stats[$d][$i]['events'];
+				$stats[$d][$i]['sum']=$stats[$d][$i]['messages']+$stats[$d][$i]['tickets']+$stats[$d][$i]['events']+$stats[$d][$i]['cdisplay']+$stats[$d][$i]['addassignment'];
 
 				$data['max']=($data['max']>$stats[$d][$i]['sum'] ? $data['max'] : $stats[$d][$i]['sum']);
 			}

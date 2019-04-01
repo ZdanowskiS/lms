@@ -30,20 +30,33 @@
 		<TD ALIGN="CENTER">
 			<TABLE>
 				<TR>
-					<TD rowspan="4">{$date}<BR>
+					<TD rowspan="{$data.rows}">{$date}<BR>
 						{$date|date_format:"%A"}</TD>
-					<TD>{trans("Messages")}:</TD>
+					
+						<TD>{if $data.messages}{trans("Messages")}:{/if}</TD>
+					
 				</TR>
+				{if $data.tickets}
 				<TR>
-
 					<TD>{trans("Tickets")}:</TD>
 				</TR>
+				{/if}
+				{if $data.events}
 				<TR>
-					
 					<TD>{trans("Events:")}</TD>
 				</TR>
+				{/if}
+				{if $data.cdisplay}
 				<TR>
-					
+					<TD>{trans("Customers:")}</TD>
+				</TR>
+				{/if}
+				{if $data.addassignment}
+				<TR>
+					<TD>{trans("Assignments:")}</TD>
+				</TR>
+				{/if}
+				<TR>
 					<TD>{trans("Sum:")}</TD>
 				</TR>
 			</TABLE>
@@ -52,17 +65,32 @@
 		<TD {if $stat.sum<($data.max*$data.marklow)}style="background-color:#00FF00"
 					{elseif $stat.sum>0 && $stat.sum>=($data.max*$data.markhigh)}style="background-color:#FF0000"{/if}>
 					<TABLE>
+				{if $data.messages}
 				<TR>
-					<TD>{$stat.messages}</TD>
+					<TD>{$stat.messages|string_format:"%01d"}</TD>
 				</TR>
+				{/if}
+				{if $data.tickets}
 				<TR>
 
-					<TD>{$stat.tickets}</TD>
+					<TD>{$stat.tickets|string_format:"%01d"}</TD>
 				</TR>
+				{/if}
+				{if $data.events}
 				<TR>
-					
-					<TD>{$stat.events}</TD>
+					<TD>{$stat.events|string_format:"%01d"}</TD>
 				</TR>
+				{/if}
+				{if $data.cdisplay}
+				<TR>
+					<TD>{$stat.cdisplay|string_format:"%01d"}</TD>
+				</TR>
+				{/if}
+				{if $data.addassignment}
+				<TR>
+					<TD>{$stat.addassignment|string_format:"%01d"}</TD>
+				</TR>
+				{/if}
 				<TR>
 					<TD><B>{$stat.sum|string_format:"%01d"}</B></TD>
 				</TR>

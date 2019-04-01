@@ -33,6 +33,10 @@ class UStatsPlugin extends LMSPlugin {
 				'class' => 'USTInitHandler',
 				'method' => 'accessTableInit'
 			),
+			'customerinfo_before_display' => array(
+				'class' => 'USTCustomerHandler',
+				'method' => 'customerBeforeDisplay'
+			),
 		);
 	 }
 

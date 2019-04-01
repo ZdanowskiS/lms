@@ -88,10 +88,12 @@
     </THEAD>
     <TBODY>
 	<TR>
-		<TD width="100%" colspan="2">
+		<TD colspan="2">
+		<TABLE width="100%"><TR>
+			<TD style="width: 1%;">
 			<TABLE width="100%">
-                                <TR>
-                                        <TD style="width: 1%;">
+            	<TR>
+                	<TD style="width: 1%;">
 						<IMG src="img/calendar.gif" alt="">
 					</TD>
 					<TD width="1%" nowrap>
@@ -153,6 +155,29 @@
 					</TD>
 				</TR>
 			</TABLE>
+			</TD>
+			<TD style="width: 50%;">
+			<TABLE width="100%">
+				<TR>
+					<TD class="bold nobr"  style="width: 1%;">
+						
+					</TD>
+					<TD class="bold nobr"  style="width: 1%;">
+						<span class="bold">{trans("Elements:")} </span>
+					</TD>
+					<TD class="nobr" colspan="1">
+						<input type="checkbox" name="messages" value="1" id="messages" checked><label for="messages">{trans("Messages")}</label><BR>
+					<input type="checkbox" name="tickets" value="1" id="tickets" checked><label for="tickets">{trans("Tickets")}</label><BR>
+					<input type="checkbox" name="events" value="1" id="events" checked><label for="events">{trans("Events")}</label><BR>
+					<input type="checkbox" name="cdisplay" value="1" id="cdisplay" checked><label for="cdisplay">{trans("Customers")}</label><BR>
+					<input type="checkbox" name="addassignment" value="1" id="addassignment" checked><label for="addassignment">{trans("Assignments")}</label>
+					</TD>
+				</TR>
+			</TABLE>
+
+		</TD></TR></TABLE>
+		
+
 		</TD>
 	</TR>
 	<TR>

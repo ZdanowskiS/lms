@@ -1,9 +1,14 @@
 <?php
 
+$_LANG['Assignments'] = 'Zobowiązania';
+
 $_LANG['asc'] = 'rosnąco';
 $_LANG['Closed Events'] = 'Zamknięte zdarzenia';
 $_LANG['Closed Assigned Events'] = 'Zamknięte przypisane zdarzenia';
 $_LANG['desc'] = 'malejąco';
+$_LANG['Events'] = 'Zdarzenia';
+$_LANG['Elements:'] = 'Elementy:';
+
 $_LANG['Order By:'] = 'Sortuj po:';
 $_LANG['High:'] = 'Górne:';
 $_LANG['Low:'] = 'Dolne:';
