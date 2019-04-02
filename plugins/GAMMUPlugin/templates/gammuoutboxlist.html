@@ -1,0 +1,103 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+{$lastonline_limit = ConfigHelper::getConfig('phpui.lastonline_limit')}
+<FORM method="get" action="?m={$layout.module}" name="choosefilter">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+<INPUT type="hidden" NAME="m" VALUE="gammuoutboxlist">
+<INPUT type="hidden" NAME="page" VALUE="1">
+</p>
+<TABLE class="lmsbox">
+	<COLGROUP>
+		<COL style="width: 10%;">
+		<COL style="width: 60%;">
+		<COL style="width: 10%;">
+		<COL style="width: 5%;">
+		<COL style="width: 1%;">
+	</COLGROUP>
+	<THEAD>
+	<TR {tip text="Click on column name to change sorting order"}>
+		<td scope="col">
+			<SPAN class="nobr"><IMG SRC="img/phone.gif" ALT=""><A href="?m=gammuoutboxlist&amp;o=destinationnumber{if $listdata.direction eq "asc" && $listdata.order eq "destinationnumber"},desc{/if}">{trans("Destination Number:")}</A>{if $listdata.order eq "destinationnumber"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><A href="?m=gammuoutboxlist&amp;o=text{if $listdata.direction eq "asc" && $listdata.order eq "duration"},desc{/if}">{trans("Text:")}</A>{if $listdata.order eq "text"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><A href="?m=gammuoutboxlist&amp;o=status{if $listdata.direction eq "asc" && $listdata.order eq "status"},desc{/if}">{trans("Status")}:</A>{if $listdata.order eq "status"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><A href="?m=gammuoutboxlist&amp;o=senderid{if $listdata.direction eq "asc" && $listdata.order eq "senderid"},desc{/if}">{trans("Sender")}:</A>{if $listdata.order eq "senderid"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><A href="?m=gammuoutboxlist&amp;o=id{if $listdata.direction eq "asc" && $listdata.order eq "id"},desc{/if}">{trans("ID")}:</A>{if $listdata.order eq "id"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<TD WIDTH="1%" align="right"  nowrap>
+
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="6">
+			<FORM METHOD="GET" ACTION="?m={$layout.module}" NAME="choosefilter">
+				<INPUT type="submit" class="hiddenbtn">
+				<INPUT TYPE="HIDDEN" NAME="m" VALUE="gammuoutboxlist">
+				{*<INPUT TYPE="HIDDEN" NAME="page" VALUE="1">*}
+				<B>{trans("Filter:")}</B>
+			</FORM>
+		</TD>
+	</TR>
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="6">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+	</THEAD>
+	<TFOOT>
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="6">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+	</TFOOT>
+	<TBODY>
+	{cycle values="light,lucid" print=false}
+	{foreach $outboxlist as $item}
+	<TR class="highlight {cycle}{if $item.disabled == 1 && !$listdata.state} blend{/if}">
+		<TD class="nobr" onClick="return self.location.href='?m=gammuinboxinfo&amp;id={$item.ID}';">
+			<IMG SRC="img/sms.gif" ALT="">&nbsp;
+			<B>{$item.DestinationNumber}</B>
+		</TD>
+		<TD class="nobr">
+			{$item.Text}
+		</TD>
+		<TD class="nobr">
+			{$item.Status}
+		</TD>
+		<TD class="nobr">
+			{$item.SenderID}
+		</TD>
+		<TD class="nobr">
+			({$item.ID|string_format:"%04d"})
+		</TD>
+		<TD class="text-right nobr">
+			<a href="?m=gammuoutboxinfo&amp;id={$item.ID}"><img src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></A>
+		</TD>
+	</TR>
+	{foreachelse}
+	<TR>
+		<TD colspan="3" class="empty-table">
+			<p>{trans("No messages found in database.")}</p>
+		</TD>
+	</TR>
+	{/foreach}
+	</TBODY>
+</TABLE>
+</FORM>
+{/block}

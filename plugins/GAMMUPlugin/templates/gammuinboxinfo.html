@@ -1,0 +1,123 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+{$xajax}
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/phone.gif" ALT="">
+		</TD>
+		<TD style="width: 99%;" class="bold">
+			{$inboxinfo.SenderNumber}
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD style="width: 100%;" COLSPAN="2" CLASS="container">
+			<TABLE style="width: 100%;" CELLPADDING="0">
+				<TR>
+					<TD style="width: 50%; vertical-align: top;">
+						<TABLE style="width: 100%;" CELLPADDING="3">
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/sms.gif" ALT="{trans("date:")}">
+		</TD>
+		<TD>
+			<B>{trans("Status")}:</B>
+		</TD>
+		<TD style="width: 90%;">
+			{$_GAMMUSTATUS[$inboxinfo.Status]}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/sms.gif" ALT="{trans("date:")}">
+		</TD>
+		<TD>
+			<B>{trans("Class")}:</B>
+		</TD>
+		<TD style="width: 90%;">
+			{$_GAMMUCLASS[$inboxinfo.Class]}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/calendar.gif" ALT="{trans("date:")}">
+		</TD>
+		<TD>
+			<B>{trans("Receiving Date Time:")}</B>
+		</TD>
+		<TD style="width: 90%;">
+			{$inboxinfo.ReceivingDateTime|date_format:"%Y/%m/%d"}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/calendar.gif" ALT="{trans("date:")}">
+		</TD>
+		<TD>
+			<B>{trans("Update in database:")}</B>
+		</TD>
+		<TD style="width: 90%;">
+			{$inboxinfo.UpdatedInDB|date_format:"%Y/%m/%d"}
+		</TD>
+	</TR>
+						</TABLE>
+					</TD>
+		<TD style="width: 100%; vertical-align: top;">
+			<TABLE style="width: 100%;" CELLPADDING="3">
+	{if $inboxinfo.Text}
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/info1.gif" ALT="{trans("Text:")}">
+		</TD>
+			<TD style="width: 1%; white-space: nowrap;">
+				<span class="bold">{trans("Text:")}</span>
+			</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			<table style="width: 100%;" cellpadding="5">
+				<tr>
+					<td class="fall superlight">
+						{$inboxinfo.Text|replace:"\n":"<br>"}
+					</td>
+				</tr>
+			</table>
+		</TD>
+	</TR>
+	{/if}
+	{if $inboxinfo.TextDecoded}
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/info1.gif" ALT="{trans("Text:")}">
+		</TD>
+			<TD style="width: 1%; white-space: nowrap;">
+				<span class="bold">{trans("Text Decoded:")}</span>
+			</TD>
+		<TD style="width: 99%;" COLSPAN="2">
+			<table style="width: 100%;" cellpadding="5">
+				<tr>
+					<td class="fall superlight">
+						{$inboxinfo.TextDecoded|replace:"\n":"<br>"}
+					</td>
+				</tr>
+			</table>
+		</TD>
+	</TR>
+	{/if}
+			</TABLE>
+		</TD>
+		</TR>
+		</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD align="right" colspan="3">
+		</TD>
+	</TR>
+	</TBODY>
+</TABLE>
+
+{/block}
