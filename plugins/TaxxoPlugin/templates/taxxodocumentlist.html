@@ -1,0 +1,146 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+{$lastonline_limit = ConfigHelper::getConfig('phpui.lastonline_limit')}
+<FORM method="get" action="?m={$layout.module}" name="choosefilter">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+<INPUT type="hidden" NAME="m" VALUE="taxxodocumentlist">
+<INPUT type="hidden" NAME="page" id="page" VALUE="1">
+</p>
+<TABLE class="lmsbox lms-ui-background-cycle">
+	<COLGROUP>
+		<COL style="width: 20%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 20%;">
+		<COL style="width: 10%;">
+		<COL style="width: 10%;">
+		<COL style="width: 1%;">
+	</COLGROUP>
+	<THEAD>
+		{block name="locdict-list-header"}
+	<TR>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/doc.gif" alt=""> <A href="?m=taxxodocumentlist&amp;o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}">{trans("Name:")}</A>{if $listdata.order == "name"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<TD WIDTH="1%" NOWRAP>
+			{trans("ID:")}
+		</TD>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/doc.gif" alt=""> <A href="?m=locdictaddresslist&amp;o=technology{if $listdata.direction == "asc" && $listdata.order == "Type"},desc{/if}">{trans("Type:")}</A>{if $listdata.order == "type"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/options.gif" alt=""> <A href="?m=locdictaddresslist&amp;o=speed{if $listdata.direction == "asc" && $listdata.order == "speed"},desc{/if}">{trans("Status:")}</A>{if $listdata.order == "speed"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/calendar.gif" alt=""> <A href="?m=locdictaddresslist&amp;o=invproject{if $listdata.direction == "asc" && $listdata.order == "invproject"},desc{/if}">{trans("Create Time:")}</A>{if $listdata.order == "stime"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><img src="img/calendar.gif" alt=""> <A href="?m=locdictaddresslist&amp;o=edate{if $listdata.direction == "asc" && $listdata.order == "edate"},desc{/if}">{trans("Update Time")}:</A>{if $listdata.order == "utime"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col" class="text-right nobr">
+
+		</td>
+	</TR>
+	<TR>
+		<TD colspan="6">
+			<SPAN class="bold">{trans("Filter:")}</SPAN>&nbsp;
+			<SPAN class="nobr">{trans("Status:")}
+			<SELECT SIZE="1" NAME="s" id="status" ONCHANGE="document.choosefilter.submit();" >
+				<OPTION VALUE="0"{if !$listdata.tds} SELECTED{/if}>{trans("- all -")}</OPTION>
+				{foreach $_TAXXO_STATUS key=key item=item}
+				<OPTION VALUE="{$key}" {if $key == $listdata.tds} selected{/if}>{$item}</OPTION>
+				{/foreach}
+			</SELECT></SPAN>
+
+			<SPAN class="nobr">{trans("Type:")}
+			<SELECT SIZE="1" NAME="t" id="type" ONCHANGE="document.choosefilter.submit();" >
+				<OPTION VALUE="0"{if !$listdata.tdt} SELECTED{/if}>{trans("- all -")}</OPTION>
+				{foreach $_TAXXO_TYPE key=key item=item}
+				<OPTION VALUE="{$key}" {if $key == $listdata.tdt} selected{/if}>{$item}</OPTION>
+				{/foreach}
+			</SELECT></SPAN>
+
+				<INPUT type="text" name="search" value="{$listdata.search}" size="15" {tip text="Enter value of searching data and select category"}>&nbsp;
+				<SELECT size="1" name="cat">
+					<OPTION value=""{if $listdata.cat == ""} SELECTED{/if}>{trans("- select filter category -")}</OPTION>
+					<OPTION value="cdate"{if $listdata.cat == "cdate"} SELECTED{/if}>{trans("day (YYYY/MM/DD)")}</OPTION>
+					<OPTION value="month"{if $listdata.cat == "month"} SELECTED{/if}>{trans("month (YYYY/MM)")}</OPTION>
+					<OPTION value="contractor"{if $listdata.cat == "contractor"} SELECTED{/if}>{trans("contractor")}</OPTION>
+				</SELECT>&nbsp;
+		</TD>
+		<TD colspan="1" class="text-right">
+		</TD>
+	</TR>
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="7">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+		{/block}
+	</THEAD>
+	<TFOOT>
+		{block name="locdict-list-footer"}
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="7">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD colspan="6" class="text-right bold">
+
+		</TD>
+		<TD colspan="2" class="text-right">
+		</TD>
+	</TR>
+		{/block}
+	</TFOOT>
+	<TBODY>
+	{foreach $documentlist as $document}
+		{block name="locdict-list-body"}
+	<TR class="highlight" data-target-url="?m=locdictaddressinfo&amp;id={$address.id}">
+		<TD class="nobr">
+			<span class="bold">
+			<A name="{$node.id}">
+			{$document.filename}</A></span>
+		</TD>
+		<TD class="nobr">
+			({$document.id|string_format:"%04d"})
+		</TD>
+		<TD class="nobr">
+			{$_TAXXO_TYPE[$document.type]}
+		</TD>
+		<TD>
+			{$_TAXXO_STATUS[$document.status]}
+		</TD>
+		<TD class="nobr">
+			{$document.stime|date_format:"%Y/%m/%d %H:%M"}
+		</TD>
+		<TD>
+			{if $document.utime}{$document.utime|date_format:"%Y/%m/%d %H:%M"}{else}-{/if}
+		</TD>
+		<TD class="text-right lms-ui-buttons nobr">
+			<a href="?m=taxxodocumentinfo&amp;id={$document.id}"><img src="img/info.gif" alt="{trans("Info")}" title="{trans("Info")}"></A>
+		</TD>
+	</TR>
+		{/block}
+	{foreachelse}
+		{block name="locdict-list-empty-row"}
+	<TR>
+		<TD colspan="5" class="empty-table">
+			<p>{trans("No such files in database.")}</p>
+		</TD>
+	</TR>
+		{/block}
+	{/foreach}
+	</TBODY>
+</TABLE>
+</FORM>
+{/block}

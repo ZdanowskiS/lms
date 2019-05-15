@@ -1,0 +1,330 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/doc.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$documentinfo.filename}
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+    <TR>
+	    <TD colspan="3" CLASS="container">
+		<TABLE WIDTH="100%" CLASS="container"  CELLPADDING="0">
+			<TR>
+				<TD WIDTH="50%" style="vertical-align:top;">
+					<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Status:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Status:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$_TAXXO_STATUS[$documentinfo.status]}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/phone.gif" ALT="{trans("Phone:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Type:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$_TAXXO_TYPE[$documentinfo.type]}
+		</TD>
+	</TR>
+	{if $documentinfo.contractorid}
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/customer.gif" ALT="{trans("Contractor:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Contractor:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$documentinfo.contractorid}
+		</TD>
+	</TR>
+	{/if}
+	{if $documentinfo.documentid}
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/doc.gif" ALT="{trans("Document:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Document:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$documentinfo.documentid}
+		</TD>
+	</TR>
+	{/if}
+					</TABLE>
+				</TD>
+				<TD WIDTH="50%" style="vertical-align:top;">
+					<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/calendar.gif" ALT="{trans("Create Time:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Create Time:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$documentinfo.ctime|date_format:"%Y/%m/%d"}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/calendar.gif" ALT="{trans("Update Time:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Update Time:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{if $documentinfo.utime}{$documentinfo.utime|date_format:"%Y/%m/%d"}{else}-{/if}
+		</TD>
+	</TR>
+	{if $documentinfo.errorcode}
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/info.gif" ALT="{trans("Error:")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Error Code:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$documentinfo.errorcode}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/info.gif" ALT="{trans("md5")}">
+		</TD>
+		<TD width="1%">
+			<B>{trans("md5:")}</B>
+		</TD>
+		<TD style="width: 99%;">
+			{$documentinfo.md5sum}
+		</TD>
+	</TR>
+					</TABLE>
+				</TD>
+			</TR>
+			<TR>
+				<TD align="right" colspan="2">
+				{if $documentinfo.type==TAXXO_TYPE_INVOICE && $documentinfo.errorcode}
+					<A onClick="return confirmLink(this, '{t a=$documentinfo.id}Are you sure, you want to remove document \'$a\' from database?{/t}')" href="?m=taxxodocumentsend&amp;id={$sellerinfo.id}">{trans("Send")} <img src="img/save.gif" alt="{trans("Send")}" title="{trans("Send")}"></A>
+				{/if}
+				{if $documentinfo.taxxoid}
+					<A onClick="return confirmLink(this, '{t a=$documentinfo.id}Are you sure, you want to update document \'$a\' from database?{/t}')" href="?m=taxxodocumentupdate&amp;id={$documentinfo.id}">{trans("Update")} <img src="img/view.gif" alt="{trans("Update")}" title="{trans("Update")}"></A>
+				{/if}
+					<A onClick="return confirmLink(this, '{t a=$documentinfo.id}Are you sure, you want to remove document \'$a\' from database?{/t}')" href="?m=taxxodocumentdel&amp;id={$documentinfo.id}">{trans("Delete")}<img src="img/delete.gif" alt="{trans("Delete")}" title="{trans("Delete")}"></A>
+				</TD>
+			</TR>
+		</TABLE>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/doc.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="1%" colspan="2">
+			<B>{trans("Content:")}</B>
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+		<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/customer.gif" ALT="{trans("Contractor")}">
+		</TD>
+		<TD width="1%">
+		</TD>
+		<TD style="width: 99%;">
+			{if $contentinfo.contractoname}{$contentinfo.contractoname}{else}-{/if}
+		</TD>
+		</TR>
+		<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/money.gif" ALT="{trans("Money")}">
+		</TD>
+		<TD width="1%">
+		</TD>
+		<TD style="width: 99%;">
+			{if $contentinfo.totalnet}
+				{trans("Net Value:")} {$contentinfo.totalnet|money_format} 
+				{trans("Tax Value:")} {$contentinfo.totaltax|money_format}  
+				{trans("Gross Value:")} {$contentinfo.totalgross|money_format} 
+			{else}
+			-
+			{/if}
+		</TD>
+		</TR>
+    </TBODY>
+</TABLE>
+
+<TABLE class="lmsbox">
+    <THEAD>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/doc.gif" ALT="{trans("Name:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Taxxo:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+    <TR>
+	    <TD colspan="3" CLASS="container">
+		<TABLE WIDTH="100%" CLASS="container"  CELLPADDING="0">
+			<TR>
+				<TD WIDTH="50%" style="vertical-align:top;">
+					<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Number:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Number:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'General'}->{'Number'}}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/options.gif" ALT="{trans("Status:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Status:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'Status'}} {trans('Message:')}{$apiinfo->{'Data'}->{'Message'}}
+			{if $apiinfo->{'Data'}->{'Message'}}<BR>{trans('Error:')}{$apiinfo->{'Data'}->{'Message'}}{/if}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/calendar.gif" ALT="{trans("Drawn Date:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Drawn Date:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'General'}->{'DrawnUpDate'}}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/calendar.gif" ALT="{trans("Sale  End Date:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Sele End Data:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'General'}->{'SaleEndDate'}}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/calendar.gif" ALT="{trans("Sale  End Date:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Forward Date:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'General'}->{'SaleEndDate'}}
+		</TD>
+	</TR>
+
+					</TABLE>
+				</TD>
+				<TD WIDTH="50%" style="vertical-align:top;">
+					<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/customer.gif" ALT="{trans("Create Time:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Name:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'ContractorDetails'}->{'Name'}}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/home.gif" ALT="{trans("Create Time:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Address:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'ContractorDetails'}->{'AddressStreet'}}<BR>
+			{$apiinfo->{'Data'}->{'ContractorDetails'}->{'AddressZipCode'}} {$apiinfo->{'Data'}->{'ContractorDetails'}->{'AddressCity'}}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/money.gif" ALT="{trans("Net:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Net Value:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'General'}->{'TotalNet'}|money_format}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/money.gif" ALT="{trans("Tax:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Tax Value:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'General'}->{'TotalTax'}|money_format}
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/money.gif" ALT="{trans("Gross:")}">
+		</TD>
+		<TD width="5%">
+			<B>{trans("Gross Value:")}</B>
+		</TD>
+		<TD style="width: 94%;">
+			{$apiinfo->{'Data'}->{'General'}->{'TotalGross'}|money_format}
+		</TD>
+	</TR>
+					</TABLE>
+				</TD>
+			</TR>
+		</TABLE>
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+{/block}
