@@ -1,9 +1,9 @@
 <?php
 
-function sortlist($a,$b) { 
+function sortlist(&$a,$b) { 
 	global $direction,$sort;
 
-	if(is_int($b[$sort]))
+	if(preg_match('/^[0-9]+$/', $b[$sort]))
 	{
 		if($direction=='desc'){
 			return ($b[$sort]-$a[$sort]);
@@ -49,56 +49,56 @@ switch($type)
 		else
 			$dateto = 0;
 
-		$users=$DB->GetAll('SELECT id, lastname, firstname, position FROM users');
+		$users=$DB->GetAllByKey('SELECT id, lastname, firstname, position FROM users','id');
 
 		foreach($users as $key => $user)
 		{
-			$stats[$user['id']]['name']=$user['lastname']." ".$user['firstname'];
+			$stats[$key]['name']=$user['lastname']." ".$user['firstname'];
 
-			$stats[$user['id']]['position']=$user['position'];
+			$stats[$key]['position']=$user['position'];
 
-			$stats[$user['id']]['messages']=$DB->GetOne('SELECT count(*) FROM rtmessages 
+			$stats[$key]['messages']=$DB->GetOne('SELECT count(*) FROM rtmessages 
 													WHERE userid=? '
 													.($datefrom ? ' AND createtime>='.$datefrom : '' )
 													.($dateto ? ' AND createtime<='.$dateto : '' ),
 													array($user['id']));
-			$sum['messages']+=$stats[$user['id']]['messages'];
+			$sum['messages']+=$stats[$key]['messages'];
 
-			$stats[$user['id']]['tickets']=$DB->GetOne('SELECT count(*) FROM rttickets 
+			$stats[$key]['tickets']=$DB->GetOne('SELECT count(*) FROM rttickets 
 													WHERE creatorid=?'
 													.($datefrom ? ' AND createtime>='.$datefrom : '' )
 													.($dateto ? ' AND createtime<='.$dateto : '' ),
 													array($user['id']));
-			$sum['tickets']+=$stats[$user['id']]['tickets'];
+			$sum['tickets']+=$stats[$key]['tickets'];
 
-			$stats[$user['id']]['ownerevents']=$DB->GetOne('SELECT count(*) FROM events 
+			$stats[$key]['ownerevents']=$DB->GetOne('SELECT count(*) FROM events 
 													WHERE userid=?'
 													.($datefrom ? ' AND creationdate>='.$datefrom : '' )
 													.($dateto ? ' AND creationdate<='.$dateto : '' ),
 													array($user['id']));
-			$sum['ownerevents']+=$stats[$user['id']]['ownerevents'];
+			$sum['ownerevents']+=$stats[$key]['ownerevents'];
 
-			$stats[$user['id']]['closedevents']=$DB->GetOne('SELECT count(*) FROM events 
+			$stats[$key]['closedevents']=$DB->GetOne('SELECT count(*) FROM events 
 													WHERE closeduserid=?'
 													.($datefrom ? ' AND closeddate>='.$datefrom : '' )
 													.($dateto ? ' AND closeddate<='.$dateto : '' ),
 													array($user['id']));
-			$sum['closedevents']+=$stats[$user['id']]['closedevents'];
+			$sum['closedevents']+=$stats[$key]['closedevents'];
 
-			$stats[$user['id']]['closedassignedevents']=$DB->GetOne('SELECT count(*) 
+			$stats[$key]['closedassignedevents']=$DB->GetOne('SELECT count(*) 
 													FROM events e 
 													JOIN eventassignments ea ON (e.id=ea.eventid)
 													WHERE closeduserid=?'
 													.($datefrom ? ' AND closeddate>='.$datefrom : '' )
 													.($dateto ? ' AND closeddate<='.$dateto : '' ),
 													array($user['id']));
-			$sum['closedassignedevents']+=$stats[$user['id']]['closedassignedevents'];
-
+			$sum['closedassignedevents']+=$stats[$key]['closedassignedevents'];
 		}
 
 		if($sort!=''){
 			uasort($stats, 'sortlist');
 		}
+
 		$layout['pagetitle'] = trans('User Activity Report');
 
 		$SMARTY->assign('sum', $sum);
