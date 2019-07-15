@@ -20,33 +20,33 @@
 	<TR>
 		<TD width="100%" colspan="2">
 			<TABLE width="100%">
-                                <TR>
-                                        <TD style="width: 1%;">
+            	<TR>
+					<TD style="width: 1%;">
 						<IMG src="img/calendar.gif" alt="">
 					</TD>
 					<TD width="1%" nowrap>
 						<span class="bold">{trans("Period:")} </span>
 					</TD>
 					<TD class="nobr" colspan="8">
-                                                <label>
-                                                	{trans("From:")}
-                                                	<input type="text" size="10" name="datefrom" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>&nbsp;
-                                                </label>
-                                                <label>
-                                                	{trans("To:")}
-                                                	<input type="text" size="10" name="dateto" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="dateto"}>&nbsp;
-                                                </label>
-                                        </TD>
+                    	<label>
+                        	{trans("From:")}
+                        	<input type="text" size="10" name="datefrom" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>&nbsp;
+                    	</label>
+                    	<label>
+                        	{trans("To:")}
+                        	<input type="text" size="10" name="dateto" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="dateto"}>&nbsp;
+                       	</label>
+                	</TD>
 				</TR>
 				<TR>
 					<TD class="bold nobr">
-						<IMG src="img/home.gif" alt="">
+						<IMG src="img/view.gif" alt="">
 					</TD>
 					<TD class="bold nobr">
 						{trans("Order By:")}
 					</TD>
 					<TD class="nobr" colspan="8">
-						<SELECT size="1" name="sort" {tip text="Select what to sort by"}>
+						<SELECT size="1" name="sort" {tip text="sort by"}>
 							<OPTION value="name">{trans("Name")}</OPTION>
 							<OPTION value="position">{trans("Position")}</OPTION>
 							<OPTION value="messages">{trans("New Messages")}</OPTION>
@@ -55,7 +55,7 @@
 							<OPTION value="closedevents">{trans("Closed Events")}</OPTION>
 							<OPTION value="closedassignedevents">{trans("Closed Assigned Events")}</OPTION>
 						</SELECT>
-						<SELECT size="1" name="direction" {tip text="Select sort direction"}>
+						<SELECT size="1" name="direction" {tip text="Put in order"}>
 							<OPTION value="desc">{trans("desc")}</OPTION>
 							<OPTION value="asc">{trans("asc")}</OPTION>
 						</SELECT>
@@ -100,25 +100,25 @@
 						<span class="bold">{trans("Period:")} </span>
 					</TD>
 					<TD class="nobr" colspan="8">
-                                                <label>
-                                                	{trans("From:")}
-                                                	<input type="text" size="10" name="datefrom" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>&nbsp;
-                                                </label>
-                                                <label>
-                                                	{trans("To:")}
-                                                	<input type="text" size="10" name="dateto" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="dateto"}>&nbsp;
-                                                </label>
-                                        </TD>
+                    	<label>
+                        	{trans("From:")}
+                        	<input type="text" size="10" name="datefrom" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>&nbsp;
+                    	</label>
+                    	<label>
+                        	{trans("To:")}
+                        	<input type="text" size="10" name="dateto" value="" placeholder="{trans("yyyy/mm/dd")}" {tip class="calendar" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="dateto"}>&nbsp;
+                        </label>
+                	</TD>
 				</TR>
 				<TR>
 					<TD class="bold nobr">
-						
+						<IMG src="img/calendar.gif" alt="">
 					</TD>
 					<TD class="bold nobr">
 						<span class="bold">{trans("Week day:")} </span>
 					</TD>
 					<TD class="nobr" colspan="8">
-						<SELECT size="1" name="weekday" {tip text="Select what to sort by"}>
+						<SELECT size="1" name="weekday" {tip text="Select week day"}>
 							<OPTION value="">{trans("all")}</OPTION>
 							<OPTION value="1">{trans("Monday")}</OPTION>
 							<OPTION value="2">{trans("Tuesday")}</OPTION>
@@ -132,21 +132,21 @@
 				</TR>
 				<TR>
 					<TD class="bold nobr">
-						
+						<IMG src="img/options.gif" alt="">
 					</TD>
 					<TD class="bold nobr">
 						<span class="bold">{trans("Mark:")} </span>
 					</TD>
 					<TD class="nobr" colspan="8">
 						{trans("Low:")}
-						<SELECT size="1" name="marklow" {tip text="Select what to sort by"}>
+						<SELECT size="1" name="marklow" {tip text="Lowest to mark"}>
 							<OPTION value="0.5">0.5</OPTION>
 							<OPTION value="0.10">0.10</OPTION>
 							<OPTION value="0.25">0.25</OPTION>
 							<OPTION value="0.50">0.50</OPTION>
 						</SELECT>
 						{trans("High:")}
-						<SELECT size="1" name="markhigh" {tip text="Select what to sort by"}>
+						<SELECT size="1" name="markhigh" {tip text="Highest to mark"}>
 							<OPTION value="0.95">0.95</OPTION>
 							<OPTION value="0.90">0.90</OPTION>
 							<OPTION value="0.75">0.75</OPTION>
