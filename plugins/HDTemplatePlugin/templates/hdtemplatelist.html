@@ -8,34 +8,33 @@
 <p style="display: none;">
 <INPUT type="submit" class="hiddenbtn">
 <INPUT type="hidden" NAME="m" VALUE="hdtemplatelist">
-
 </p>
 <TABLE class="lmsbox lms-ui-background-cycle">
 	<COLGROUP>
-		<COL style="width: 70%;">
+		<COL style="width: 60%;">
 		<COL style="width: 20%;">
+		<COL style="width: 10%;">
 		<COL style="width: 1%;">
 	</COLGROUP>
 	<THEAD>
-		{block name="locdict-list-header"}
+		{block name="hdtemplate-list-header"}
 	<TR>
-		<td scope="col">
-			<SPAN class="nobr"><img src="img/doc.gif" alt=""> <A href="?m=hdtemplatelist&amp;o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}">{trans("Name:")}</A>{if $listdata.order == "name"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		<TD scope="col">
+			<SPAN class="nobr"><A href="?m=hdtemplatelist&amp;o=name{if $listdata.direction == "asc" && $listdata.order == "name"},desc{/if}">{trans("Name:")}</A>{if $listdata.order == "name"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
 		</td>
-		<TD WIDTH="1%" NOWRAP>
+		<TD scope="col">
+			<SPAN class="nobr"><A href="?m=hdtemplatelist&amp;o=type{if $listdata.direction == "asc" && $listdata.order == "type"},desc{/if}">{trans("Type:")}</A>{if $listdata.order == "type"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</TD>
+		<TD scope="col">
 			{trans("ID:")}
 		</TD>
 		<td scope="col" class="text-right nobr">
 			<A href="?m=hdtemplateadd">{trans("New Template")} <img src="img/save.gif" alt=""></A>
 		</td>
 	</TR>
-	<TR>
-		<TD colspan="3">
-		</TD>
-	</TR>
 	{if $pagination->getTotal() != 0}
 	<TR>
-		<TD class="lms-ui-pagination" colspan="3">
+		<TD class="lms-ui-pagination" colspan="4">
 			{include file="pagination.html"}
 		</TD>
 	</TR>
@@ -43,31 +42,26 @@
 		{/block}
 	</THEAD>
 	<TFOOT>
-		{block name="sellboard-list-footer"}
+		{block name="hdtemplate-list-footer"}
 	{if $pagination->getTotal() != 0}
 	<TR>
-		<TD class="lms-ui-pagination" colspan="3">
+		<TD class="lms-ui-pagination" colspan="4">
 			{include file="pagination.html"}
 		</TD>
 	</TR>
 	{/if}
-	<TR>
-		<TD colspan="2" class="text-right bold">
-
-		</TD>
-		<TD colspan="1" class="text-right">
-
-		</TD>
-	</TR>
 		{/block}
 	</TFOOT>
 	<TBODY>
 	{foreach $templatelist as $item}
-		{block name="locdict-list-body"}
+		{block name="hdtemplate-list-body"}
 	<TR class="highlight" data-target-url="?m=hdtemplateinfo&amp;id={$item.id}">
 		<TD class="nobr">
 			<span class="bold">
 			{$item.name}</span>
+		</TD>
+		<TD class="nobr">
+			{$_HDTTYPES[$item.type]}
 		</TD>
 		<TD>
 			({$item.id|string_format:"%04d"})
@@ -80,9 +74,9 @@
 	</TR>
 		{/block}
 	{foreachelse}
-		{block name="sellboard-list-empty-row"}
+		{block name="hdtemplate-list-empty-row"}
 	<TR>
-		<TD colspan="3" class="empty-table">
+		<TD colspan="4" class="empty-table">
 			<p>{trans("No such template in database.")}</p>
 		</TD>
 	</TR>
