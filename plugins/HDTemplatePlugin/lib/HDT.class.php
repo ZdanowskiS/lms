@@ -126,6 +126,9 @@ class HDT {
             case 'id':
                 $sqlord = ' ORDER BY id';
                 break;
+            case 'type':
+                $sqlord = ' ORDER BY type';
+                break;
 			default:
 				$sqlord = ' ORDER BY name';
 				
@@ -135,7 +138,7 @@ class HDT {
 		if($count) {
 			$sql .= 'SELECT COUNT(id) ';
 		}else {
-				$sql .= 'SELECT id, name ';
+				$sql .= 'SELECT id, name, type ';
 		}
 
 		$sql .= 'FROM hdtemplates '
