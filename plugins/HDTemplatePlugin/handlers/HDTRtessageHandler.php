@@ -12,7 +12,6 @@ class HDTRtessageHandler {
 
 		return $hook_data;
 	}
-
 }
 
 ?>
