@@ -19,7 +19,18 @@
     <TBODY>
 	<TR>
 		<TD width="1%">
-			<img src="img/desc.gif" alt="">
+			<img src="img/producer.gif" alt="">
+		</TD>
+		<TD width="1%">
+			<B>{trans("Type:")}</B>
+		</TD>
+		<TD width="98%">
+			{$_HDTTYPES[$templateinfo.type]}
+		</TD>
+	</TR>
+	<TR>
+		<TD width="1%">
+			<img src="img/edit.gif" alt="">
 		</TD>
 		<TD width="1%">
 			<B>{trans("Template:")}</B>
@@ -37,7 +48,7 @@
 	<TR>
 		<TD align="right" colspan="3">
 				<A href="?m=hdtemplateedit&amp;id={$templateinfo.id}" ACCESSKEY="E">{trans("Edit")} <IMG src="img/edit.gif" alt="{trans("Edit")}"></A>
-				<A href="?m=hdtemplatedel&amp;id={$templateinfo.id}">{trans("Delete")} <img src="img/delete.gif" alt="{trans("Delete")}"></A>
+				<A href="?m=hdtemplatedel&amp;id={$templateinfo.id}" onClick="return confirmLink(this, '{t a=$templateinfo.name}Are you sure, you want to remove template \'$a\' from database?{/t}')">{trans("Delete")} <img src="img/delete.gif" alt="{trans("Delete")}"></A>
 		</TD>
 	</TR>
     </TBODY>
