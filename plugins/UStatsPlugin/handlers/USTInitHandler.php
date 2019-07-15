@@ -49,6 +49,8 @@ class USTInitHandler {
 	public function accessTableInit() {
 		$access = AccessRights::getInstance();
 
+		$access->insertPermission(new Permission('ust_full_access', trans('User Stats'), '^ust.*$'),
+			AccessRights::FIRST_FORBIDDEN_PERMISSION);
 	}
 }
 ?>
