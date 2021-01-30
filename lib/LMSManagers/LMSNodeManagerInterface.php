@@ -26,14 +26,14 @@
 
 /**
  * LMSNodeManagerInterface
- * 
+ *
  * @author Maciej Lew <maciej.lew.1987@gmail.com>
  */
 interface LMSNodeManagerInterface
 {
     public function GetNodeOwner($id);
 
-    public function NodeUpdate($nodedata, $deleteassignments = FALSE);
+    public function NodeUpdate($nodedata, $deleteassignments = false);
 
     public function DeleteNode($id);
 
@@ -44,6 +44,8 @@ interface LMSNodeManagerInterface
     public function GetNodeIDByMAC($mac);
 
     public function GetNodeIDByName($name);
+
+    public function GetNodeIDByNetName($name);
 
     public function GetNodeIPByID($id);
 
@@ -61,15 +63,15 @@ interface LMSNodeManagerInterface
 
     public function NodeSet($id, $access = -1);
 
-    public function NodeSetU($id, $access = FALSE);
+    public function NodeSetU($id, $access = false);
 
-    public function NodeSetWarn($id, $warning = FALSE);
+    public function NodeSetWarn($id, $warning = false);
 
     public function NodeSwitchWarn($id);
 
-    public function NodeSetWarnU($id, $warning = FALSE);
+    public function NodeSetWarnU($id, $warning = false);
 
-    public function IPSetU($netdev, $access = FALSE);
+    public function IPSetU($netdev, $access = false);
 
     public function NodeAdd($nodedata);
 
@@ -77,11 +79,21 @@ interface LMSNodeManagerInterface
 
     public function NodeStats();
 
-    public function SetNodeLinkType($node, $link = NULL);
+    public function SetNodeLinkType($node, $link = null);
 
     public function updateNodeField($nodeid, $field, $value);
 
     public function GetUniqueNodeLocations($customerid);
 
-	public function GetNodeLocations($customerid, $address_id = null);
+    public function GetNodeLocations($customerid, $address_id = null);
+
+    public function GetNodeCustomerAssignments($nodeid, $assignments);
+
+    public function getNodeRoutedNetworks($nodeid);
+
+    public function getNodeNotRoutedNetworks($nodeid);
+
+    public function addNodeRoutedNetworks(array $params);
+
+    public function deleteNodeRoutedNetworks(array $params);
 }

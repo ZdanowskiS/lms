@@ -2,12 +2,15 @@
 <form method="post" action="?m=helpdesk" name="helpdesk" enctype="multipart/form-data">
 {box title="New Request"}
 <table id="newrequest" width="100%" cellpadding="3" class="light">
+	{if count($queues) == 1}
+	<input type="hidden" name="helpdesk[queue]" value="{$queues[0].id}">
+	{else}
 	<tr class="light">
 		<td width="1%">
 			{img src="queue.gif" alt=""}
 		</td>
 		<td width="1%">
-			<b>{trans("Queue:")}</b>
+			<strong>{trans("Queue:")}</strong>
 		</td>
 		<td width="98%">
 			<SELECT name="helpdesk[queue]" {userpaneltip text="Select queue" trigger="queue"}>
@@ -17,15 +20,18 @@
 			</SELECT>
 		</td>
 	</tr>
+	{/if}
 	<tr class="light">
 		<td width="1%">
 			{img src="helpdesk.gif" alt=""}
 		</td>
 		<td width="1%">
-			<b>{trans("Subject:")}</b>
+			<strong>{trans("Subject:")}</strong>
 		</td>
 		<td width="98%">
-			<input style="width:99%;" type="text" name="helpdesk[subject]" value="{$helpdesk.subject}" {userpaneltip text="Enter request subject" trigger="subject"} />
+			<input style="width:99%;" type="text" name="helpdesk[subject]" value="{$helpdesk.subject}"
+					maxlength="{ConfigHelper::getConfig('rt.subject_max_length', 50)}"
+					{userpaneltip text="Enter request subject" trigger="subject"} />
 		</td>
 	</tr>
 	<tr class="light">
@@ -33,7 +39,7 @@
 			{img src="help.gif" alt=""}
 		</td>
 		<td width="1%">
-			<b>{trans("Body:")}</b>
+			<strong>{trans("Body:")}</strong>
 		</td>
 		<td width="98%">
 			<textarea style="width:99%;" name="helpdesk[body]" rows="5" {userpaneltip text="Enter request contents" trigger="body"} rows="5" cols="40">{$helpdesk.body}</textarea>
@@ -44,7 +50,7 @@
 			{img src="attach.gif" alt=""}
 		</td>
 		<td>
-			<b>{trans("Attachments:")}</b>
+			<strong>{trans("Attachments:")}</strong>
 		</td>
 		<td>
 			<input type="file" name="files[]" id="attachments" size="55" {userpaneltip text="Enter path to file or click 'Browse' button" trigger="files"} multiple />
@@ -59,7 +65,7 @@
 	</tr>
 	<tr class="light">
 		<td width="100%" colspan="3" align="right">
-			<a class="submit-button" accesskey="S">{trans("Submit")} {img src="save.gif" alt="Submit"}</a>
+			<a class="submit-button" accesskey="S">{trans("<!helpdesk>Submit")} {img src="save.gif" alt="<!helpdesk>Submit"}</a>
 		</td>
 	</tr>
 </table>
@@ -98,8 +104,14 @@
 		});
 
 		$('#newrequest .submit-button').click(function() {
+			if ($(this).is("[disabled]")) {
+				return false;
+			}
+			$(this).attr('disabled', 'disabled');
 			if (check_file_sizes()) {
 				document.helpdesk.submit();
+			} else {
+				$(this).removeAttr('disabled');
 			}
 		});
 	});
