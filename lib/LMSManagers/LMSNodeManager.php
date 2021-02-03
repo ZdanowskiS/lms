@@ -3,7 +3,7 @@
 /*
  *  LMS version 1.11-git
  *
- *  Copyright (C) 2001-2017 LMS Developers
+ *  Copyright (C) 2001-2021 LMS Developers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -834,6 +834,56 @@ class LMSNodeManager extends LMSManager implements LMSNodeManagerInterface
         return $result;
     }
 
+    public function GetNodeLinkType($devid, $nodeid)
+    {
+        $link = $this->db->GetRow(
+            'SELECT linktype AS type, linktechnology AS technology,
+            linkspeed AS speed, linkradiosector AS radiosector, port FROM nodes
+            WHERE netdev = ? AND id = ?',
+            array($devid, $nodeid)
+        );
+        if (empty($link)) {
+            $link = array();
+        } else {
+            $link['radiosectors'] = $this->db->GetAll(
+                'SELECT id, name FROM netradiosectors WHERE netdev = ?'
+                . ($link['technology'] ? ' AND (technology = ' . $link['technology'] . ' OR technology = 0)' : '')
+                . ' ORDER BY name',
+                array($devid)
+            );
+        }
+
+        return $link;
+    }
+
+    public function ValidateNodeLink($node, $link)
+    {
+        $netdev = $this->db->GetOne('SELECT netdev FROM nodes WHERE id  = ?', array($node));
+        if (!$netdev) {
+            return trans('Unknown error!');
+        }
+
+        if ($this->db->GetOne(
+            'SELECT id
+            FROM netlinks
+            WHERE (src = ? AND srcport = ?) OR (dst = ? AND dstport = ?)',
+            array($netdev, $link['port'], $netdev, $link['port'])
+        ) || $this->db->GetOne(
+            'SELECT id
+            FROM nodes
+            WHERE port = ? AND id <> ?',
+            array($link['port'], $node)
+        )) {
+            return trans('Selected port number is taken by other device or node!');
+        }
+
+        if ($this->db->GetOne('SELECT ports FROM netdevices WHERE id = ?', array($netdev)) < intval($link['port'])) {
+            return trans('Incorrect port number!');
+        }
+
+        return true;
+    }
+
     public function SetNodeLinkType($node, $link = null)
     {
         if (empty($link)) {
@@ -851,10 +901,16 @@ class LMSNodeManager extends LMSManager implements LMSNodeManagerInterface
             $speed = isset($link['speed']) ? intval($link['speed']) : 100000;
         }
 
-        $res = $this->db->Execute(
-            'UPDATE nodes SET linktype=?, linkradiosector = ?, linktechnology=?, linkspeed=? WHERE id=?',
-            array($type, $radiosector, $technology, $speed, $node)
-        );
+        $query = 'UPDATE nodes SET linktype = ?, linkradiosector = ?, linktechnology = ?, linkspeed = ?';
+        $args = array($type, $radiosector, $technology, $speed);
+        if (isset($link['port'])) {
+            $query .= ', port = ?';
+            $args[] = intval($link['port']);
+        }
+        $query .= ' WHERE id=?';
+        $args[] = $node;
+        $res = $this->db->Execute($query, $args);
+
         if ($this->syslog && $res) {
             $nodedata = $this->db->GetRow('SELECT ownerid, netdev FROM vnodes WHERE id=?', array($node));
             $args = array(

@@ -3,7 +3,7 @@
 /*
  *  LMS version 1.11-git
  *
- *  Copyright (C) 2001-2018 LMS Developers
+ *  Copyright (C) 2001-2021 LMS Developers
  *
  *  Please, see the doc/AUTHORS for more information about authors!
  *
@@ -99,6 +99,85 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
         return $res;
     }
 
+    public function ValidateNetDevLink($dev1, $dev2, $link = null)
+    {
+        $error = array();
+
+        if (intval($link['srcport']) && $this->db->GetOne(
+            'SELECT id
+            FROM netlinks
+            WHERE (src = ? AND srcport = ? AND dst <> ?) OR (dst = ? AND dstport = ? AND src <> ?)',
+            array(
+                $dev1,
+                $link['srcport'],
+                $dev2,
+                $dev2,
+                $link['srcport'],
+                $dev1,
+            )
+        )) {
+            $error['srcport'] = trans('Selected port number is taken by other device!');
+        }
+
+        if (intval($link['dstport']) && $this->db->GetOne(
+            'SELECT id
+            FROM netlinks
+            WHERE (src = ? AND srcport = ? AND dst <> ?) OR (dst = ? AND dstport = ? AND src <> ?)',
+            array(
+                $dev1,
+                $link['dstport'],
+                $dev2,
+                $dev2,
+                $link['dstport'],
+                $dev1,
+            )
+        )) {
+            $error['dstport'] = trans('Selected port number is taken by other device!');
+        }
+
+        if (intval($link['srcport']) && $this->db->GetOne(
+            'SELECT id
+            FROM nodes
+            WHERE port = ? AND netdev IN ?',
+            array(
+                $link['srcport'],
+                array($dev1, $dev2),
+            )
+        )) {
+            $error['srcport'] = trans('Selected port number is taken by node!');
+        }
+
+        if (intval($link['dstport']) && $this->db->GetOne(
+            'SELECT id
+            FROM nodes
+            WHERE port = ? AND netdev IN ?',
+            array(
+                $link['dstport'],
+                array($dev1, $dev2),
+            )
+        )) {
+            $error['dstport'] = trans('Selected port number is taken by node!');
+        }
+
+        $ports = $this->db->GetOne('SELECT ports FROM netdevices WHERE id = ?', array($dev1));
+        if (!empty($ports) && $ports < intval($link['dstport'])) {
+            return array(
+                'dstport' => trans('Incorrect port number!'),
+            );
+        }
+
+        $ports = $this->db->GetOne('SELECT ports FROM netdevices WHERE id = ?', array($dev2));
+        if (!empty($ports) && $ports < intval($link['srcport'])) {
+            $error['srcport'] = trans('Incorrect port number!');
+        }
+
+        if (empty($error)) {
+            return true;
+        } else {
+            return $error;
+        }
+    }
+
     public function SetNetDevLinkType($dev1, $dev2, $link = null)
     {
         if (empty($link)) {
@@ -115,30 +194,37 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
             $speed = isset($link['speed']) ? $link['speed'] : 100000;
         }
 
+        $query = 'UPDATE netlinks SET type = ?, srcradiosector = ?, dstradiosector = ?, technology = ?, speed = ?';
         $args = array(
             'type' => $type,
-            'src_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR) => $srcradiosector,
-            'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR) => $dstradiosector,
+            'src_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR) => $dstradiosector,
+            'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR) => $srcradiosector,
             'technology' => $technology,
             'speed' => $speed,
-            'src_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV) => $dev2,
-            'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV) => $dev1,
         );
-        $res = $this->db->Execute('UPDATE netlinks SET type=?, srcradiosector=?, dstradiosector=?, technology=?, speed=?
-			WHERE src=? AND dst=?', array_values($args));
-        if (!$res) {
-            $args = array(
-                'type' => $type,
-                'src_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR) => $srcradiosector,
-                'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR) => $dstradiosector,
-                'technology' => $technology,
-                'speed' => $speed,
-                'src_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV) => $dev1,
-                'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV) => $dev2,
-            );
-            $res = $this->db->Execute('UPDATE netlinks SET type=?, dstradiosector=?, srcradiosector=?, technology=?, speed=?
-				WHERE src=? AND dst=?', array_values($args));
+        if (isset($link['srcport']) && isset($link['dstport'])) {
+            $query .= ', srcport = ?, dstport = ?';
+            $args['srcport'] = intval($link['dstport']);
+            $args['dstport'] = intval($link['srcport']);
         }
+        $query .= ' WHERE src = ? AND dst = ?';
+
+        $args['src_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV)] = $dev1;
+        $args['dst_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV)] = $dev2;
+        $res = $this->db->Execute($query, array_values($args));
+
+        if (!$res) {
+            $args['src_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR)] = $srcradiosector;
+            $args['dst_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR)] = $dstradiosector;
+            if (isset($link['srcport']) && isset($link['dstport'])) {
+                $args['srcport'] = intval($link['srcport']);
+                $args['dstport'] = intval($link['dstport']);
+            }
+            $args['src_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV)] = $dev2;
+            $args['dst_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV)] = $dev1;
+            $res = $this->db->Execute($query, array_values($args));
+        }
+
         if ($this->syslog && $res) {
             $args[SYSLOG::RES_NETLINK] =
                 $this->db->GetOne('SELECT id FROM netlinks WHERE (src=? AND dst=?) OR (dst=? AND src=?)', array($dev1, $dev2, $dev1, $dev2));
@@ -146,10 +232,11 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
                 SYSLOG::RES_NETLINK,
                 SYSLOG::OPER_UPDATE,
                 $args,
-                array('src_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV),
-                'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV),
-                'src_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR),
-                'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR),
+                array(
+                    'src_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV),
+                    'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_NETDEV),
+                    'src_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR),
+                    'dst_' . SYSLOG::getResourceKey(SYSLOG::RES_RADIOSECTOR),
                 )
             );
         }
@@ -512,11 +599,38 @@ class LMSNetDevManager extends LMSManager implements LMSNetDevManagerInterface
 
     public function GetNetDevLinkType($dev1, $dev2)
     {
-        return $this->db->GetRow(
-            'SELECT type, technology, speed FROM netlinks
-			WHERE (src=? AND dst=?) OR (dst=? AND src=?)',
-            array($dev1, $dev2, $dev1, $dev2)
+        $link = $this->db->GetRow(
+            'SELECT type, technology, speed,
+                (CASE src WHEN ? THEN srcport ELSE dstport END) AS dstport,
+                (CASE src WHEN ? THEN dstport ELSE srcport END) AS srcport,
+                (CASE src WHEN ? THEN dstradiosector ELSE srcradiosector END) AS srcradiosector,
+                (CASE src WHEN ? THEN srcradiosector ELSE dstradiosector END) AS dstradiosector
+            FROM netlinks
+            WHERE (src = ? AND dst = ?) OR (dst = ? AND src = ?)',
+            array($dev1, $dev1, $dev1, $dev1, $dev1, $dev2, $dev1, $dev2)
         );
+        if (empty($link)) {
+            $link = array();
+        } else {
+            $link['radiosectors'] = array(
+                'srcradiosector' => $link['srcradiosector'],
+                'dstradiosector' => $link['dstradiosector'],
+                'dst' => $this->db->GetAll(
+                    'SELECT id, name FROM netradiosectors WHERE netdev = ? '
+                    . ($link['type'] == LINKTYPE_WIRELESS && $link['technology'] ? ' AND (technology = 0 OR technology = ' . intval($link['technology']) . ')' : '')
+                    . ' ORDER BY name',
+                    array($dev1)
+                ),
+                'src' => $this->db->GetAll(
+                    'SELECT id, name FROM netradiosectors WHERE netdev = ? '
+                    . ($link['type'] == LINKTYPE_WIRELESS && $link['technology'] ? ' AND (technology = 0 OR technology = ' . intval($link['technology']) . ')' : '')
+                    . ' ORDER BY name',
+                    array($dev2)
+                ),
+            );
+        }
+
+        return $link;
     }
 
     public function GetNetDevConnectedNames($id)

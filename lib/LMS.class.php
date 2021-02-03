@@ -1156,10 +1156,28 @@ class LMS
         return $manager->NetDevLinkNode($id, $devid, $link);
     }
 
-    public function SetNetDevLinkType($dev1, $dev2, $link)
+    public function ValidateNetDevLink($dev1, $dev2, $link = null)
+    {
+        $manager = $this->getNetDevManager();
+        return $manager->ValidateNetDevLink($dev1, $dev2, $link);
+    }
+
+    public function SetNetDevLinkType($dev1, $dev2, $link = null)
     {
         $manager = $this->getNetDevManager();
         return $manager->SetNetDevLinkType($dev1, $dev2, $link);
+    }
+
+    public function GetNodeLinkType($devid, $nodeid)
+    {
+        $manager = $this->getNodeManager();
+        return $manager->GetNodeLinkType($devid, $nodeid);
+    }
+
+    public function ValidateNodeLink($node, $link)
+    {
+        $manager = $this->getNodeManager();
+        return $manager->ValidateNodeLink($node, $link);
     }
 
     public function SetNodeLinkType($node, $link)
@@ -3393,6 +3411,30 @@ class LMS
     {
         $manager = $this->getFinanceManager();
         return $manager->GetPromotions();
+    }
+
+    public function getNumberPlan($id)
+    {
+        $manager = $this->getFinanceManager();
+        return $manager->getNumberPlan($id);
+    }
+
+    public function addNumberPlan(array $numberplan)
+    {
+        $manager = $this->getFinanceManager();
+        return $manager->addNumberPlan($numberplan);
+    }
+
+    public function updateNumberPlan(array $numberplan)
+    {
+        $manager = $this->getFinanceManager();
+        return $manager->updateNumberPlan($numberplan);
+    }
+
+    public function deleteNumberPlan($id)
+    {
+        $manager = $this->getFinanceManager();
+        return $manager->deleteNumberPlan($id);
     }
 
     public function AggregateDocuments($list)
