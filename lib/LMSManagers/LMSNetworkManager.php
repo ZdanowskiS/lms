@@ -715,6 +715,8 @@ class LMSNetworkManager extends LMSManager implements LMSNetworkManagerInterface
 
     public function GetNetworkRecord($id, $page = 0, $plimit = 4294967296, $firstfree = false)
     {
+        global $LMS;
+
         $network = $this->db->GetRow('SELECT no.ownerid, ne.id, ne.name, ne.vlanid, vl.vlanid, inet_ntoa(ne.address) AS address,
                 ne.address AS addresslong, ne.mask, ne.interface, ne.gateway, ne.dns, ne.dns2,
                 ne.domain, ne.wins, ne.dhcpstart, ne.dhcpend, ne.hostid, ne.authtype, inet_ntoa(ne.snat) AS snat,
@@ -743,6 +745,12 @@ class LMSNetworkManager extends LMSManager implements LMSNetworkManagerInterface
 				SELECT id, name, ipaddr_pub AS ipaddr, ownerid, netdev
 				FROM vnodes WHERE ipaddr_pub > ? AND ipaddr_pub < ?', 'ipaddr', array($id, $network['addresslong'], ip_long($network['broadcast']),
             $network['addresslong'], ip_long($network['broadcast'])));
+
+        $hook_data = $LMS->executeHook(
+            'networkrecord_after_get',
+                compact("id", "network", "nodes")
+            );
+        extract($hook_data);
 
         if ($network['hostid']) {
             $network['hostname'] = $this->db->GetOne('SELECT name FROM hosts WHERE id=?', array($network['hostid']));
