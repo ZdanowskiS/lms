@@ -1,0 +1,76 @@
+CREATE TABLE proxmox_nodes (
+    id int(11) NOT NULL auto_increment,
+    name varchar(32) NOT NULL DEFAULT '',
+    ipaddr int(16) DEFAULT NULL,
+    realm varchar(32) NOT NULL DEFAULT '',
+    login varchar(32) NOT NULL DEFAULT '',
+    password varchar(32) NOT NULL DEFAULT '',
+    PRIMARY KEY (id),
+    UNIQUE KEY name (name)
+) ENGINE=InnoDB;
+
+CREATE TABLE proxmox_node_bridges (
+    id int(11) NOT NULL auto_increment,
+    nodeid int(11) NOT NULL,
+    name varchar(32) NOT NULL DEFAULT '',
+    PRIMARY KEY (id),
+    CONSTRAINT proxmox_node_bridges_nodeid_fkey
+        FOREIGN KEY (nodeid) REFERENCES proxmox_nodes (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE proxmox_node_storages (
+    id int(11) NOT NULL auto_increment,
+    nodeid int(11) NOT NULL,
+    name varchar(32) NOT NULL DEFAULT '',
+    PRIMARY KEY (id),
+    CONSTRAINT proxmox_node_storages_nodeid_fkey
+        FOREIGN KEY (nodeid) REFERENCES proxmox_nodes (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE proxmox_node_vztemplates (
+    id int(11) NOT NULL auto_increment,
+    nodeid int(11) NOT NULL,
+    name varchar(32) NOT NULL DEFAULT '',
+    PRIMARY KEY (id),
+    CONSTRAINT proxmox_node_vztemplatesid_fkey
+        FOREIGN KEY (nodeid) REFERENCES proxmox_nodes (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE proxmox_offerts (
+    id int(11) NOT NULL auto_increment,
+    name varchar(64) NOT NULL DEFAULT '',
+    type smallint NOT NULL DEFAULT '0',
+    nodeid int(11) NOT NULL,
+    clone int(11) NOT NULL,
+    cores smallint NOT NULL DEFAULT '0',
+    memory int(11) NOT NULL,
+    storageid int(11) NULL,
+    size int(11) NOT NULL DEFAULT '0',
+    vztemplateid int(11) NULL,
+    net text DEFAULT '' NOT NULL,
+    nettype smallint NOT NULL DEFAULT '0',
+    bridgeid int(11) NULL,
+    ratelimit int(11) DEFAULT NULL,
+    state_id   int(11) NULL,
+    PRIMARY KEY (id),
+	CONSTRAINT `proxmox_offerts_storageid_fk`   FOREIGN KEY (storageid) REFERENCES proxmox_node_storages  (id) ON DELETE SET NULL ON UPDATE CASCADE,
+	CONSTRAINT `proxmox_offerts_vztemplateid_fk`   FOREIGN KEY (vztemplateid) REFERENCES proxmox_node_vztemplates  (id) ON DELETE SET NULL ON UPDATE CASCADE,
+	CONSTRAINT `proxmox_offerts_bridgeid_fk`   FOREIGN KEY (bridgeid) REFERENCES proxmox_node_bridges  (id) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE proxmox_vmct (
+    id int(11) NOT NULL auto_increment,
+    name varchar(32) NOT NULL DEFAULT '',
+    type smallint NOT NULL DEFAULT '0',
+    password varchar(32)	DEFAULT '' NOT NULL,
+    customerid int(11) NOT NULL,
+    ipaddr int(16) unsigned NOT NULL DEFAULT '0',
+	nodeid int(11) DEFAULT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT proxmox_vmct_customerid_fkey
+        FOREIGN KEY (customerid) REFERENCES customers (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT proxmox_vmct_nodeid_fkey
+	    FOREIGN KEY (nodeid) REFERENCES proxmox_nodes (id) ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_ProxmoxPlugin', '2021020700');

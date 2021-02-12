@@ -1,0 +1,186 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+{$xajax}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM name="vmctedit" id="vmctedit" method="POST" action="?m=proxmox_vmctedit&id={$vmctdata.id}">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+<INPUT type="text" name="vmctedit[id]" value="{$vmctdata.id}" class="hiddenbtn">
+</p>
+<INPUT type="submit" class="hiddenbtn">
+</p>
+<TABLE class="lmsbox">
+	<THEAD>
+	<TR>
+		<TD style="width: 100%;" colspan="2">
+			<TABLE>
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/host.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Name:")}
+					</TD>
+					<TD>
+						<INPUT type="text" name="vmctedit[name]" value="{$vmctdata.name}" SIZE="16" {tip text="Node name" trigger="name" bold=1}>
+                       <strong>{trans("VMID:")}</strong> <INPUT type="text" name="vmctedit[vmid]" value="{$vmctdata.vmid}" SIZE="4" {tip text="VM id" trigger="name" bold=1}>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR>
+		<TD style="width: 50%;" class="container valign-top">
+			<TABLE cellpadding="2" width="50%">
+			    <tr>
+				    <td>
+					    <img src="img/customer.gif" alt="{trans("Customer:")}">
+				    </td>
+				    <td class="bold nobr">
+					    {trans("Customer:")}
+				    </td>
+				    <td>
+					    {customerlist
+										form       = "vmctadd"
+										customers  = $customers
+										selected   = $vmctdata.customerid
+										selectname = "vmctedit[customerid]"
+										select_id  = "customerid_select"
+										inputname  = "vmctedit[customer]"
+										input_id   = "customerid_input"
+										selecttip  = "Assign cm/ct to customer"
+										required   = true
+										customOnChange = "customer_change();"
+										version = 2
+									}
+				    </td>
+				</tr>
+
+			    <TR>
+				    <TD>
+					    <IMG SRC="img/network.gif" ALT="{trans("Network:")}">
+					</TD>
+				    <td class="bold nobr">
+					    {trans("Network:")}
+				    </td>
+				    <TD class="cell-flex">
+					    <div>
+						    <SELECT SIZE="1" name="vmctedit[netid]" {tip class="lms-ui-advanced-select" text="Choose network" trigger="netid"}>
+							    <OPTION VALUE="0">{trans("- automatic selection -")}</OPTION>
+								    {foreach $networks as $net}
+										<OPTION VALUE="{$net.id}" data-pubnetid="{$net.pubnetid}" {if $net.id == $nodedata.netid} selected{/if}{if $net.disabled == 1} class="lms-ui-alert"{/if}>{$net.name|truncate:20:"":true}: {$net.address}/{$net.prefix}</OPTION>
+									{/foreach}
+						    </SELECT>
+							{if (ConfigHelper::checkConfig('phpui.show_assigned_networks_only')) && ConfigHelper::checkValue(ConfigHelper::checkConfig('phpui.public_ip', 'true'))}
+							    <script>
+								    $('[name="vmctedit[netid]"]').change(function() {
+									    var pubnetid = parseInt($('option:selected', this).attr('data-pubnetid'));
+									    if (pubnetid) {
+										    $('[name="vmctedit[pubnetid]"]').val(0);
+										}
+									});
+								</script>
+							{/if}
+					    </div>
+				    </TD>
+			    </TR>
+
+				<TR>
+				    <TD>
+					    <IMG SRC="img/ip.gif" ALT="{trans("IP address:")}">
+				    </TD>
+				    <td class="bold nobr">
+					    {trans("IP address:")}
+				    </td>
+					<TD>
+					    <INPUT TYPE="TEXT" NAME="vmctedit[ipaddr]" VALUE="{$vmctdata.ipaddr}" required {tip text="Enter IP address" trigger="ipaddr"}>
+					    <a href="javascript:void(0);" onClick="return ipchoosewin({
+						    ipelem: document.vmctedit['vmctedit[ipaddr]'],
+						    ip: document.vmctedit['vmctedit[ipaddr]'].value
+						    });" {tip text="Click to select IP from the list"}>&raquo;&raquo;&raquo;</A>
+						<br>
+					    <a href="#" id="selectfirstfreeaddress">{trans("Select first free address")}</a>
+				    </TD>
+				</TR>
+								<script type="text/javascript">
+								<!--
+									$(function() {
+										$('#selectfirstfreeaddress').click(function() {
+											var netid = $('[name="vmctedit[netid]"]').val();
+											if (netid == 0)
+												return;
+											xajax_getFirstFreeAddress(netid, $('[name="vmctedit[ipaddr]"]').uniqueId().attr('id'));
+										});
+									});
+								//-->
+								</script>
+				 <TR>
+				    <TD>
+					    <IMG SRC="img/passwd.gif" ALT="{trans("Password:")}">
+					</TD>
+				    <td class="bold nobr">
+					    {trans("Password:")}
+				    </td>
+					<TD>
+					    <INPUT type="text" name="vmctedit[passwd]" value="{$vmctdata.password|escape}"
+										{tip text="Enter password (optional)" trigger="passwd"}>
+						<a href="javascript:GenPasswd();" {tip text="Click to generate random password"}>&raquo;&raquo;&raquo;</A>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+		<TD width="50%">
+			<TABLE cellpadding="3" width="50%">
+				 <TR>
+				    <TD>
+					    <IMG SRC="img/options.gif" ALT="{trans("Password:")}">
+					</TD>
+				    <td class="bold nobr">
+					    {trans("Cores")}:
+				    </td>
+					<TD>
+					    <INPUT type="text" name="vmctedit[cpus]" value="{$vmctdata.cpus}" size="2"
+										{tip text="Number of cpus" trigger="cpus"}>
+					</TD>
+				</TR>
+				 <TR>
+				    <TD>
+					    <IMG SRC="img/options.gif" ALT="{trans("Memory:")}">
+					</TD>
+				    <td class="bold nobr">
+					    {trans("Memory")}:
+				    </td>
+					<TD>
+					    <INPUT type="text" name="vmctedit[maxmem]" value="{$vmctdata.maxmem}" size="6"
+										{tip text="Memory" trigger="maxmem"}>
+					</TD>
+				</TR>
+            </TABLE>
+        </TD>
+   	</TR>
+	<TR>
+		<TD style="width: 100%;" class="lms-ui-box-buttons" colspan="2">
+			{button type="submit" id="save-button" icon="save" label="Submit"}
+			{button id="cancel-button" icon="cancel" label="Cancel" onclick="location.href = '?m=customerinfo&id={$vmctdata.customerid}';"}
+            <br>
+            <label>
+			<INPUT type="checkbox" name="modeladd[reuse]" id="vmctadd_reuse" value="ON" {if $vmctadd.reuse}checked{/if}>{trans("Display this form again, when this proxmox vm/ct is saved")}
+            </label>
+		</TD>
+	</TR>
+	</TBODY>
+<TABLE>
+<script>
+	function GenPasswd() {
+		var length = {ConfigHelper::getConfig('phpui.nodepassword_length', '16')};
+		if (length > 32) length = 32;
+
+		document.forms['vmctadd'].elements['vmctadd[passwd]'].value =
+			generate_random_string(length, "{ConfigHelper::getConfig('phpui.nodepassword_allowed_characters', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')|replace:'"':'\"'}");
+	}
+</script>
+{/block}

@@ -1,0 +1,44 @@
+{literal}
+<style>
+[id^=templatepanel-] .name{width:30em}
+</style>
+{/literal}
+
+{tab_container id="actionsbox" label="Actions"}
+
+	{tab_header content_id="templatepanel-`$layout.module`"}
+		{tab_header_cell}
+			<strong>{trans("Os Template:")}</strong>
+		{/tab_header_cell}
+		{tab_header_cell}
+				<A href="?m=proxmox_reloadtemplate&amp;id={if $nodeinfo.id}{$nodeinfo.id}{/if}">{trans("Reload")} &raquo;</A>
+		{/tab_header_cell}
+	{/tab_header}
+
+	{tab_contents id="templatepanel-`$layout.module`"}
+		{tab_table}
+			<div class="lms-ui-tab-table-row header">
+                <div class="lms-ui-tab-table-column name">
+				    {trans("Name:")}
+				</div>
+				
+				<div class="lms-ui-tab-table-column buttons">
+					&nbsp;
+				</div>
+			</div>
+		    {foreach from=$vztemplatelist item=template}
+			<div class="lms-ui-tab-table-row">
+			    <div class="lms-ui-tab-table-column name">
+                    <strong>{$template.name}</strong>
+				</div>
+				<div class="lms-ui-tab-table-column buttons">
+				</div>
+            </div>
+		    {foreachelse}
+            <div class="lms-ui-tab-empty-table">
+                {trans("No template found in database.")}
+            </div>
+		    {/foreach}
+        {/tab_table}
+	{/tab_contents}
+{/tab_container}

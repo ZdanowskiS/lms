@@ -1,0 +1,44 @@
+{literal}
+<style>
+[id^=bridgespanel-] .name{width:15em}
+</style>
+{/literal}
+
+{tab_container id="actionsbox" label="Actions"}
+
+	{tab_header content_id="bridgespanel-`$layout.module`"}
+		{tab_header_cell}
+			<strong>{trans("Bridges:")}</strong>
+		{/tab_header_cell}
+		{tab_header_cell}
+				<A href="?m=proxmox_reloadbridges&amp;id={if $nodeinfo.id}{$nodeinfo.id}{/if}">{trans("Reload")} &raquo;</A>
+		{/tab_header_cell}
+	{/tab_header}
+
+	{tab_contents id="bridgespanel-`$layout.module`"}
+		{tab_table}
+			<div class="lms-ui-tab-table-row header">
+                <div class="lms-ui-tab-table-column name">
+				    {trans("Name:")}
+				</div>
+				<div class="lms-ui-tab-table-column buttons">
+					&nbsp;
+				</div>
+			</div>
+		    {foreach from=$bridgelist item=bridge}
+			<div class="lms-ui-tab-table-row">
+			    <div class="lms-ui-tab-table-column name">
+                    <strong>{$bridge.name}</strong>
+			    </div>
+				<div class="lms-ui-tab-table-column buttons">
+				</div>
+            </div>
+		    {foreachelse}
+            <div class="lms-ui-tab-empty-table">
+                {trans("No bridge found in database.")}
+            </div>
+		    {/foreach}
+        {/tab_table}
+	{/tab_contents}
+{/tab_container}
+

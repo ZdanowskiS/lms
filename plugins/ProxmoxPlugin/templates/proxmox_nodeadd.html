@@ -1,0 +1,93 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM name="nodeadd" id="nodeadd" method="POST" action="?m=proxmox_nodeadd">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+</p>
+<TABLE class="lmsbox">
+	<THEAD>
+	<TR>
+		<TD style="width: 100%;" colspan="2">
+			<TABLE>
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/host.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Name:")}
+					</TD>
+					<TD>
+						<INPUT type="text" name="nodeadd[name]" value="{$nodeadd.name}" SIZE="16" {tip text="Node name" trigger="name" bold=1}>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR>
+		<TD style="width: 50%;" class="container valign-top">
+			<TABLE cellpadding="3" width="100%">
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/ip.gif" ALT="{trans("IP address:")}">
+					</TD>
+					<TD style="width: 5%;" class="bold nobr">
+						{trans("IP address:")}
+					</TD>
+					<TD>
+						<INPUT TYPE="TEXT" NAME="nodeadd[ipaddr]" VALUE="{$nodeadd.ipaddr}" required {tip text="Enter IP address" trigger="ipaddr"}>
+					</TD>
+				</TR>
+				<TR>
+					<TD>
+						<IMG SRC="img/options.gif" ALT="{trans("IP address:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Realm:")}
+					</TD>
+					<TD>
+						<INPUT TYPE="TEXT" NAME="nodeadd[realm]" VALUE="{$nodeadd.realm}" required {tip text="Enter realm" trigger="realm"}>
+					</TD>
+				</TR>
+				<TR>
+					<TD>
+						<IMG SRC="img/users.gif" ALT="{trans("Login:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Login:")}
+					</TD>
+					<TD>
+						<INPUT TYPE="TEXT" NAME="nodeadd[login]" VALUE="{$nodeadd.login}" required {tip text="Enter login" trigger="login"}>
+					</TD>
+				</TR>
+				<TR>
+					<TD>
+						<IMG SRC="img/pass.gif" ALT="{trans("Password:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Password:")}
+					</TD>
+					<TD>
+						<INPUT TYPE="password" NAME="nodeadd[password]" VALUE="{$nodeadd.password}" required {tip text="Enter passward" trigger="password"}>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 100%;" class="lms-ui-box-buttons" colspan="2">
+			{button type="submit" id="save-button" icon="save" label="Submit"}
+			{button id="cancel-button" icon="cancel" label="Cancel" onclick="location.href = '?m=proxmox_nodelist';"}
+            <br>
+            <label>
+			<INPUT type="checkbox" name="nodeadd[reuse]" id="modeladd_reuse" value="ON" {if $modeladd.reuse}checked{/if}>{trans("Display this form again, when this proxmox node is saved")}
+            </label>
+		</TD>
+	</TR>
+	</TBODY>
+<TABLE>
+{/block}

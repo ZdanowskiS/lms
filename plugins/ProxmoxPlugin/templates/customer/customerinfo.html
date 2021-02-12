@@ -1,0 +1,105 @@
+{block name="customerassignments" append}
+{literal}
+<style>
+[id^=proxmoxpanel-] .name{width:10em}[id^=proxmoxpanel-] .params{width:10em}[id^=proxmoxpanel-] .type{width:15em}[id^=proxmoxpanel-] .vmcid{width:15em}[id^=proxmoxpanel-] .cdate{width:15em}[id^=proxmoxpanel-] .buttons{width:8em}
+@media all and (max-width:900px){[id^=proxmoxpanel-] .col-2{flex-direction:column!important;width:10em!important}[id^=proxmoxpanel-] .col-2 div{flex-grow:0!important;width:100%!important}}
+@media all and (max-width:600px){[id^=proxmoxpanel-] .col-4{flex-direction:column!important;width:10em!important}[id^=proxmoxpanel-] .col-4 div{flex-grow:0!important;width:100%!important}}
+</style>
+{/literal}
+{tab_container id="customervmctbox"}
+
+	{tab_header content_id="proxmoxpanel-`$layout.module`"}
+		{tab_header_cell icon="lms-ui-icon-netdev"}
+			<strong>VM/CT:</strong>
+		{/tab_header_cell}
+		{tab_header_cell}
+			<A href="?m=proxmox_vmctadd&customerid={$customerinfo.id}">{trans("New VM/CT")}&raquo;</A>&nbsp;
+		{/tab_header_cell}
+	{/tab_header}
+	{tab_contents id="proxmoxpanel-`$layout.module`"}
+		{tab_table}
+			<div class="lms-ui-tab-table-row header">
+				
+					<div class="lms-ui-tab-table-wrapper col-2">
+					    <div class="lms-ui-tab-table-column name">
+						    {trans("Name:")}
+					    </div>
+					    <div class="lms-ui-tab-table-column params">
+						     {trans("Parameters:")}
+					    </div>
+                    </div>
+					    <div class="lms-ui-tab-table-column type">
+						     {trans("Type:")}
+					    </div>
+					<div class="lms-ui-tab-table-wrapper col-2">
+						<div class="lms-ui-tab-table-column vmcid">
+							{trans("VM/CT ID:")}
+						</div>
+						<div class="lms-ui-tab-table-column cdate">
+							{trans("Created:")}
+						</div>
+					</div>
+						
+					<div class="lms-ui-tab-table-column buttons">
+					</div>
+			</div>
+			{foreach $vmctlist as $vmct}
+			<div class="lms-ui-tab-table-row" data-target-url="?m=proxmox_lxcinfo&id={$lxc.id}">
+				
+					<div class="lms-ui-tab-table-wrapper col-2">
+					    <div class="lms-ui-tab-table-column name">
+						    <strong>{$vmct.name}</strong><BR>
+                            {$vmct.nodename}
+					    </div>
+					    <div class="lms-ui-tab-table-column params">
+						   {trans("Max memory")}: {$vmct.maxmem}<BR>
+                           {trans("CPU")}: {$vmct.cpus}
+					    </div>
+                    </div>
+						<div class="lms-ui-tab-table-column type">
+							 {$_PROXMOXTYPE[$vmct.type]}
+						</div>
+					<div class="lms-ui-tab-table-wrapper col-2">
+						<div class="lms-ui-tab-table-column vmcid">
+							 {$vmct.vmid}
+						</div>
+						<div class="lms-ui-tab-table-column cdate">
+							{$vmct.cdate|date_format:"%Y-%m-%d"}
+						</div>
+					</div>
+					
+					<div class="lms-ui-tab-table-column buttons">
+			    {button type="link" href="?m=proxmox_vmctset&id={$vmct.id}&status={if $vmct.status=='running'}stop{else}start{/if}"
+						icon="{if $vmct.status=='running'}connected{else}disconnected{/if}"
+						tip="{if $vmct.status=='running'}Disable{else}Enable{/if}"}
+
+                {button type="link" class="delete-vmct" icon="delete" tip="Delete" href="?m=proxmox_vmctdel&id={$vmct.id}"}
+						{button type="link" href="?m=proxmox_vmctedit&id={$vmct.id}" icon="edit" tip="Edit"}
+						{button type="link" href="?m=proxmox_vmctinfo&id={$vmct.id}" icon="view" tip="Info"}
+					</div>
+			</div>
+            {foreachelse}
+				<div class="lms-ui-tab-empty-table">
+					{trans("That customer hasn't got any VM/CT.")}
+				</div>
+			{/foreach}
+		{/tab_table}
+	{/tab_contents}
+{/tab_container}
+
+<SCRIPT type="text/javascript">
+<!--
+	if (getCookie('proxmox-panel') == '1')
+		document.getElementById('proxmox-panel').style.display = '';
+
+	$(function() {
+		$('.delete-vmct').click(function () {
+			confirmDialog($t("Are you sure, you want to delete this VM/CT?"), this).done(function () {
+				location.href = $(this).attr('href');
+			});
+			return false;
+		});
+    });
+//-->
+</SCRIPT>
+{/block}

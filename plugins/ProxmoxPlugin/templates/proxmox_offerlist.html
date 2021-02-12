@@ -1,0 +1,109 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+{$lastonline_limit = ConfigHelper::getConfig('phpui.lastonline_limit')}
+<FORM method="get" action="?m={$layout.module}" name="choosefilter">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+<INPUT type="hidden" NAME="m" VALUE="genieacs_modellist">
+<INPUT type="hidden" NAME="page" VALUE="1">
+</p>
+<TABLE class="lmsbox lms-ui-background-cycle">
+	<COLGROUP>
+		<COL style="width: 20%;">
+		<COL style="width: 30%;">
+		<COL style="width: 10%;">
+		<COL style="width: 5%;">
+		<COL style="width: 20%;">
+		<COL style="width: 1%;">
+	</COLGROUP>
+	<THEAD>
+	<TR {tip text="Click on column name to change sorting order"}>
+		<td scope="col">
+			<SPAN class="nobr"><A href="?m=proxmox_offerlist&amp;o=name{if $listdata.direction eq "asc" && $listdata.order eq "name"},desc{/if}">{trans("Name:")}</A>{if $listdata.order eq "name"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><A href="?m=proxmox_offerlist&amp;o=ostemplate{if $listdata.direction eq "asc" && $listdata.order eq "ostemplate"},desc{/if}">{trans("Os Template:")}</A>{if $listdata.order eq "ostemplate"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN><BR>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr">{trans("Storage:")}</SPAN>
+		</td>
+		<td scope="col">
+			{trans("ID")}:
+		</td>
+		<td scope="col">
+			<SPAN class="nobr">{trans("Parameters:")}<BR>
+			{trans("Cores")}/{trans("Memory")}/{trans("Size")}:</SPAN>
+		</td>
+		<td scope="col" class="text-right nobr">
+
+		</td>
+	</TR>
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="6">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+	</THEAD>
+	<TFOOT>
+	{if $pagination->getTotal() != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="6">
+			{include file="pagination.html"}
+		</TD>
+	</TR>
+	{/if}
+	</TFOOT>
+	<TBODY>
+    {foreach $offerlist as $offer}
+	<TR class="highlight" data-target-url="?m=proxmox_offerinfo&amp;id={$offer.id}">
+		<TD class="bold nobr">
+			{$offer.name}
+		</TD>
+		<TD class="nobr">
+			{$offer.ostemplate}
+		</TD>
+		<TD class="nobr">
+			{$offer.storagename}
+		</TD>
+		<TD class="nobr">
+			({$offer.id|string_format:"%04d"})
+		</TD>
+		<TD class="nobr">
+			{$offer.cores}/{$offer.memory}/
+			{$offer.size}
+		</TD>
+		<TD class="lms-ui-buttons text-right nobr">
+            {button type="link" icon="delete" class="delete-offer" tip="Delete" href="?m=proxmox_offerdel&amp;id={$offer.id}"}
+            {button type="link" icon="edit" tip="Edit" href="?m=proxmox_offeredit&amp;id={$offer.id}"}
+            {button type="link" icon="info" tip="Info" href="?m=proxmox_offerinfo&amp;id={$offer.id}"}
+		</TD>
+	</TR>
+	{foreachelse}
+	<TR>
+		<TD colspan="6" class="empty-table">
+			<p>&nbsp;</p>
+			<p>{trans("No matching offerts")}</p>
+			<p>&nbsp;</p>
+		</TD>
+	</TR>
+	{/foreach}
+	</TBODY>
+</TABLE>
+</FORM>
+<script>
+	$(function() {
+		$('.delete-offer').click(function () {
+			var name = $(this).closest('tr').attr('data-name');
+			confirmDialog($t("Are you sure, you want to remove offer '$a' from database?", name), this).done(function () {
+				location.href = $(this).attr('href');
+			});
+			return false;
+		});
+	});
+</script>
+{/block}

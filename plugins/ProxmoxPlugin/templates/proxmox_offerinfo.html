@@ -1,0 +1,171 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox">
+	<THEAD>
+	<TR>
+		<TD style="width: 100%;" colspan="2">
+			<TABLE>
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/money.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Name:")}
+					</TD>
+					<TD>
+						{$offerinfo.name}
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR>
+		<TD style="width: 50%;" class="container valign-top">
+			<TABLE cellpadding="3" width="100%">
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/host.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold">
+						{trans("<!pr>Node")}:
+					</TD>
+					<TD>
+                    {assign var="nodeid" value=$offerinfo.nodeid}
+					{$nodes[$offerinfo.nodeid].name}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Os Template:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.ostemplate}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Clone:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.clone}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Cores:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.cores}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Memory:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.memory}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Storage:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.storage}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Size:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.size}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/ip.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Net:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.net}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/netdev.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Net type:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$_PROXMOXNETTYPE[$offerinfo.nettype]}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/ip.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Bridge:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.bridge}
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/downrate.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Rate limit:")}
+					</TD>
+					<TD style="width: 99%;">
+						{$offerinfo.ratelimit}
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 100%;" class="lms-ui-box-buttons colspan="2">
+            {button type="link-button" id="edit-button" icon="edit" label="Edit" href="?m=proxmox_offeredit&id={$offerinfo.id}"}
+            {button id="delete-lxc" icon="delete" label="Delete" onclick="javascript:delete_lxc('{$offerinfo.id}', '{$offerinfo.name}');"}
+		</TD>
+	</TR>
+	</TBODY>
+<TABLE>
+<script>
+function delete_lxc(lxcid, lxcname) {
+    confirmDialog($t("Are you sure, you want to remove proxmox node '$a' from database?",lxcname), $('#delete-lxc')).done(function() {
+	    location.href = '?m=proxmox_offerlxcdel&id='+lxcid;
+    });
+    return false;
+}
+</script>
+{/block}

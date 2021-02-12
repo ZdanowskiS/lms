@@ -1,0 +1,94 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox">
+	<THEAD>
+	<TR>
+		<TD style="width: 100%;" colspan="2">
+			<TABLE>
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/host.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Name:")}
+					</TD>
+					<TD>
+						{$vmctinfo.name}
+                       <strong>{trans("VMID:")}</strong> {$vmctinfo.vmid}
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR>
+		<TD style="width: 50%;" class="container valign-top">
+			<TABLE cellpadding="3" width="100%">
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/host.gif" ALT="{trans("VM/CT:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+					    {trans("Node:")}
+				    </td>
+				    <TD>
+							{$vmctinfo.nodename}
+                    </TD>
+				</TR>
+				<TR>
+					<TD>
+					   <img src="img/customer.gif" alt="{trans("Customer:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Customer:")}
+					</TD>
+					<TD>
+						 <A href="?m=customerinfo&amp;id={$vmctinfo.customerid}">{$vmctinfo.customer}
+					</TD>
+				</TR>
+				<TR>
+					<TD>
+						<IMG SRC="img/ip.gif" ALT="{trans("IP address:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("IP address:")}
+					</TD>
+					<TD>
+						{$vmctinfo.ipaddr}
+					</TD>
+				</TR>
+				<TR>
+					<TD>
+						<IMG SRC="img/pass.gif" ALT="{trans("Login:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Password:")}
+					</TD>
+					<TD>
+						{if $vmctinfo.ipaddr}********{/if}
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 100%;" colspan="2" class="lms-ui-box-buttons">
+            {button type="link-button" id="edit-button" icon="edit" label="Edit" href="?m=proxmox_vmctedit&id={$vmctinfo.id}"}
+            {button id="delete-vmct" icon="delete" label="Delete" onclick="javascript:delete_vmct('{$vmctinfo.id}', '{$vmctinfo.name}');"}
+		</TD>
+	</TR>
+	</TBODY>
+<TABLE>
+<script>
+function delete_vmct(vmctid, vmctname) {
+    confirmDialog($t("Are you sure, you want to remove VM/CT '$a' from database?",vmctname), $('#delete-vmct')).done(function() {
+	    location.href = '?m=proxmox_vmctdel&id='+vmctid;
+    });
+    return false;
+}
+</script>
+{/block}

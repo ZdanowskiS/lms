@@ -1,0 +1,239 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<SCRIPT type="text/javascript">
+
+$(document).ready(function() {  
+
+    var selected=document.getElementById('type').value;
+
+    $(".ct").css("display", "none");
+    $(".vm").css("display", "none");
+    $(".clone").css("display", "none");
+    if(selected==1)
+    {
+        $(".vm").css("display", "table-row");
+    }
+    else if(selected==2)
+    {
+        $(".clone").css("display", "table-row");
+    }
+    else if(selected==3)
+    {
+        $(".ct").css("display", "table-row");
+    }
+});
+
+$(document).on('change', '#type',function (event) {
+
+    var selected=event.target.value;
+
+    $(".ct").css("display", "none");
+    $(".vm").css("display", "none");
+    $(".clone").css("display", "none");
+    if(selected==1)
+    {
+        $(".vm").css("display", "table-row");
+    }
+    else if(selected==2)
+    {
+        $(".clone").css("display", "table-row");
+    }
+    else if(selected==3)
+    {
+        $(".ct").css("display", "table-row");
+    }
+});
+</script>
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM name="offeradd" id="offeradd" method="POST" action="?m=proxmox_offeradd">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+</p>
+<TABLE class="lmsbox">
+	<THEAD>
+	<TR>
+		<TD style="width: 100%;" colspan="2">
+			<TABLE>
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/money.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Name:")}
+					</TD>
+					<TD>
+						<INPUT type="text" name="offeradd[name]" value="{$offeradd.name}" SIZE="24" {tip text="Offer name" trigger="name" bold=1}>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR>
+		<TD style="width: 50%;" class="container valign-top">
+			<TABLE cellpadding="3" width="100%">
+				<TR class="all">
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold">
+						{trans("Type:")}
+					</TD>
+					<TD>
+			<SELECT SIZE="1" NAME="offeradd[type]" id="type" {tip text="Offer type" trigger="type"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select type ...")}</OPTION>
+				{foreach from=$_PROXMOXTYPE key=key item=item}
+					<OPTION VALUE="{$key}"{if $offeradd.type == $key} SELECTED{/if}>{$item}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR class="clone ct vm">
+					<TD width="1%">
+						<IMG SRC="img/host.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold">
+						{trans("<!pr>Node:")}
+					</TD>
+					<TD>
+			<SELECT SIZE="1" NAME="offeradd[nodeid]" {tip text="Proxmox node" trigger="node"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select node ...")}</OPTION>
+				{foreach from=$nodes key=key item=item}
+					<OPTION VALUE="{$item.id}"{if $offeradd.node == $key} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR class="clone">
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Clone:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeradd[clone]" value="{$offeradd.clone}" SIZE="4" {tip text="Cores" trigger="cores" bold=1}>
+					</TD>
+				</TR>
+				<TR class="ct">
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Os Template:")}
+					</TD>
+					<TD style="width: 99%;">
+			<SELECT SIZE="1" NAME="offeradd[vztemplateid]" {tip text="System template" trigger="vztemplateid"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select template ...")}</OPTION>
+				{foreach from=$vztemplates key=key item=item}
+					<OPTION VALUE="{$item.id}"{if $offeradd.ostemplate == $key} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR class="ct vm">
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Cores:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeradd[cores]" value="{$offeradd.cores}" SIZE="2" {tip text="Cores" trigger="cores" bold=1}>
+					</TD>
+				</TR>
+				<TR class="ct vm">
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Memory:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeradd[memory]" value="{$offeradd.memory}" SIZE="6" {tip text="Memory in MB" trigger="memory" bold=1}>
+					</TD>
+				</TR>
+				<TR class="clone ct vm">
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Storage:")}
+					</TD>
+					<TD style="width: 99%;">
+			<SELECT SIZE="1" NAME="offeradd[storage]" {tip text="Storage" trigger="storage"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select storage ...")}</OPTION>
+				{foreach from=$storagelist key=key item=item}
+					<OPTION VALUE="{$item.id}"{if $offeradd.storage == $key} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR class="ct vm">
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Size:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeradd[size]" value="{$offeradd.size}" SIZE="3" {tip text="Disk size in GB" trigger="size" bold=1}>
+					</TD>
+				</TR>
+				<TR class="ct">
+					<TD width="1%">
+						<IMG SRC="img/ip.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Net:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeradd[net]" value="{$offeradd.net}" SIZE="64" {tip text="Net Configuration" trigger="net" bold=1}>
+					</TD>
+				</TR>
+				<TR class="vm">
+					<TD width="1%">
+						<IMG SRC="img/netdev.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Net type:")}
+					</TD>
+					<TD style="width: 99%;">
+			<SELECT SIZE="1" NAME="offeradd[nettype]" {tip text="Network interface type" trigger="nettype"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select type ...")}</OPTION>
+				{foreach from=$_PROXMOXNETTYPE key=key item=item}
+					<OPTION VALUE="{$key}"{if $offeradd.storage == $key} SELECTED{/if}>{$item}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR class="clone ct vm">
+					<TD width="1%">
+						<IMG SRC="img/downrate.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Rate limit:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeradd[ratelist]" value="{$offeradd.ratelist}" SIZE="64" {tip text="Rate limit" trigger="ratelimit" bold=1}>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 100%;" class="lms-ui-box-buttons" colspan="2">
+			{button type="submit" id="save-button" icon="save" label="Submit"}
+			{button id="cancel-button" icon="cancel" label="Cancel" onclick="location.href = '?m=proxmox_offerlist';"}
+            <br>
+            <label>
+			<INPUT type="checkbox" name="offeradd[reuse]" id="modeladd_reuse" value="ON" {if $offeradd.reuse}checked{/if}> {trans("Display this form again, when this offer is saved")}
+            </label>
+		</TD>
+	</TR>
+	</TBODY>
+<TABLE>
+{/block}

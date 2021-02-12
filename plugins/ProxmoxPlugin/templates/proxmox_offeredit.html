@@ -1,0 +1,181 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<FORM name="offeredit" id="offeredit" method="POST" action="?m=proxmox_offeredit&id={$offerinfo.id}">
+<p style="display: none;">
+<INPUT type="submit" class="hiddenbtn">
+<INPUT type="text" name="offeredit[id]" value="{$offerinfo.id}" class="hiddenbtn">
+</p>
+<TABLE class="lmsbox">
+	<THEAD>
+	<TR>
+		<TD style="width: 100%;" colspan="2">
+			<TABLE>
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/money.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Name:")}
+					</TD>
+					<TD>
+						<INPUT type="text" name="offeredit[name]" value="{$offerinfo.name}" SIZE="16" {tip text="Offer name" trigger="name" bold=1}>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR>
+		<TD style="width: 50%;" class="container valign-top">
+			<TABLE cellpadding="3" width="100%">
+				<TR class="all">
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold">
+						{trans("Type:")}
+					</TD>
+					<TD>
+			<SELECT SIZE="1" NAME="offeredit[type]" id="type" {tip text="Host type" trigger="type"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select node ...")}</OPTION>
+				{foreach from=$_PROXMOXTYPE key=key item=item}
+					<OPTION VALUE="{$key}"{if $offerinfo.type == $key} SELECTED{/if}>{$item} </OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/host.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold">
+						{trans("<!pr>Node:")}
+					</TD>
+					<TD>
+			<SELECT SIZE="1" NAME="offeredit[nodeid]" {tip text="Node" trigger="nodeid"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select node ...")}</OPTION>
+				{foreach from=$nodes key=key item=item}
+					<OPTION VALUE="{$item.id}"{if $offerinfo.nodeid == $key} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Os Template:")}
+					</TD>
+					<TD style="width: 99%;">
+			<SELECT SIZE="1" NAME="offeredit[vztemplateid]" {tip text="System template" trigger="vztemplateid"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select template ...")}</OPTION>
+				{foreach from=$vztemplates key=key item=item}
+					<OPTION VALUE="{$item.id}"{if $offerinfo.vztemplateid == $key} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Cores:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeredit[cores]" value="{$offerinfo.cores}" SIZE="2" {tip text="Cores" trigger="cores" bold=1}>
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Memory:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeredit[memory]" value="{$offerinfo.memory}" SIZE="6" {tip text="Memory" trigger="memory" bold=1}>
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Storage:")}
+					</TD>
+					<TD style="width: 99%;">
+			<SELECT SIZE="1" NAME="offeredit[storage]" {tip text="Storage" trigger="storage"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select storage ...")}</OPTION>
+				{foreach from=$storagelist key=key item=item}
+					<OPTION VALUE="{$item.id}"{if $offerinfo.storageid == $key} SELECTED{/if}>{$item.name}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/options.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Size:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeredit[size]" value="{$offerinfo.size}" SIZE="3" {tip text="Disk size in GB" trigger="size" bold=1}>
+					</TD>
+				</TR>
+				<TR>
+					<TD width="1%">
+						<IMG SRC="img/ip.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Net:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeredit[net]" value="{$offerinfo.net}" SIZE="64" {tip text="Net Configuration" trigger="net" bold=1}>
+					</TD>
+				</TR>
+				<TR class="vm">
+					<TD width="1%">
+						<IMG SRC="img/netdev.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Net type:")}
+					</TD>
+					<TD style="width: 99%;">
+			<SELECT SIZE="1" NAME="offeredit[nettype]" {tip text="Network interface type" trigger="nettype"} style="max-width:160px;">
+				<OPTION VALUE="0">{trans("... select type ...")}</OPTION>
+				{foreach from=$_PROXMOXNETTYPE key=key item=item}
+					<OPTION VALUE="{$key}"{if $offertadd.nettype == $key} SELECTED{/if}>{$item}</OPTION>
+				{/foreach}
+			</SELECT>
+					</TD>
+				</TR>
+				<TR class="clone ct vm">
+					<TD width="1%">
+						<IMG SRC="img/downrate.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Rate limit:")}
+					</TD>
+					<TD style="width: 99%;">
+<INPUT type="text" name="offeredit[ratelist]" value="{$offerinfo.ratelist}" SIZE="64" {tip text="Rate limit" trigger="ratenet" bold=1}>
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 100%;" class="lms-ui-box-buttons" colspan="2">
+				{button type="submit" id="save-button" icon="save" label="Submit"}
+				{button id="cancel-button" icon="cancel" label="Cancel" onclick="location.href = '?m=proxmox_offerinfo&amp;id={$offerinfo.id}';"}
+		</TD>
+	</TR>
+	</TBODY>
+<TABLE>
+{/block}

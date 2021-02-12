@@ -1,0 +1,45 @@
+{literal}
+<style>
+[id^=storagepanel-] .name{width:15em}
+</style>
+{/literal}
+
+{tab_container id="actionsbox" label="Actions"}
+
+	{tab_header content_id="storagepanel-`$layout.module`"}
+		{tab_header_cell}
+			<strong>{trans("Storage:")}</strong>
+		{/tab_header_cell}
+		{tab_header_cell}
+				<A href="?m=proxmox_reloadstorage&amp;id={if $nodeinfo.id}{$nodeinfo.id}{/if}">{trans("Reload")} &raquo;</A>
+		{/tab_header_cell}
+	{/tab_header}
+
+	{tab_contents id="storagepanel-`$layout.module`"}
+		{tab_table}
+			<div class="lms-ui-tab-table-row header">
+                <div class="lms-ui-tab-table-column name">
+				    {trans("Name:")}
+				</div>
+				<div class="lms-ui-tab-table-column buttons">
+					&nbsp;
+				</div>
+			</div>
+		    {foreach from=$storagelist item=storage}
+			<div class="lms-ui-tab-table-row">
+			    <div class="lms-ui-tab-table-column name">
+                    <strong>{$storage.name}</strong>
+			    </div>
+
+				<div class="lms-ui-tab-table-column buttons">
+				</div>
+            </div>
+		    {foreachelse}
+            <div class="lms-ui-tab-empty-table">
+                {trans("No storage found in database.")}
+            </div>
+		    {/foreach}
+        {/tab_table}
+	{/tab_contents}
+{/tab_container}
+

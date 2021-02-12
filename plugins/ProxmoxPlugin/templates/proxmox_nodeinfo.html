@@ -1,0 +1,96 @@
+{extends file="layout.html"}
+{block name=title}::: LMS :{$layout.pagetitle|striphtml} :::{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox">
+	<THEAD>
+	<TR>
+		<TD style="width: 100%;" colspan="2">
+			<TABLE>
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/host.gif" ALT="">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Name:")}
+					</TD>
+					<TD>
+						{$nodeinfo.name}
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR>
+		<TD style="width: 50%;" class="container valign-top">
+			<TABLE cellpadding="3" width="100%">
+				<TR>
+					<TD style="width: 1%;">
+						<IMG SRC="img/ip.gif" ALT="{trans("IP address:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("IP address:")}
+					</TD>
+					<TD>
+						{$nodeinfo.ipaddr}
+					</TD>
+				</TR>
+				<TR>
+					<TD>
+						<IMG SRC="img/options.gif" ALT="{trans("Realm:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Realm:")}
+					</TD>
+					<TD>
+						{$nodeinfo.realm}
+					</TD>
+				</TR>
+				<TR>
+					<TD>
+						<IMG SRC="img/users.gif" ALT="{trans("Login:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Login:")}
+					</TD>
+					<TD>
+						{$nodeinfo.login}
+					</TD>
+				</TR>
+				<TR>
+					<TD>
+						<IMG SRC="img/pass.gif" ALT="{trans("Password:")}">
+					</TD>
+					<TD style="width: 1%;" class="bold nobr">
+						{trans("Password:")}
+					</TD>
+					<TD>
+						{if $nodeinfo.password}********{/if}
+					</TD>
+				</TR>
+			</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 100%;" colspan="2" class="lms-ui-box-buttons">
+            {button type="link-button" id="edit-button" icon="edit" label="Edit" href="?m=proxmox_nodeedit&id={$nodeinfo.id}"}
+            {button id="delete-model" icon="delete" label="Delete" onclick="javascript:delete_node('{$nodeinfo.id}', '{$nodeinfo.name}');"}
+		</TD>
+	</TR>
+	</TBODY>
+<TABLE>
+<script>
+function delete_node(nodeid, nodename) {
+    confirmDialog($t("Are you sure, you want to remove proxmox node '$a' from database?",nodename), $('#delete-model')).done(function() {
+	    location.href = '?m=proxmox_nodedel&id='+nodeid;
+    });
+    return false;
+}
+</script>
+{include file="proxmox_bridgebox.html"}
+{include file="proxmox_storagebox.html"}
+{include file="proxmox_vztemplatebox.html"}
+{/block}
