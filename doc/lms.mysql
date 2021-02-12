@@ -56,6 +56,7 @@ DROP TABLE IF EXISTS messageitems;
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS excludedgroups;
 DROP TABLE IF EXISTS customercontacts;
+DROP TABLE IF EXISTS customercontactproperties;
 DROP TABLE IF EXISTS dbinfo;
 DROP TABLE IF EXISTS ewx_pt_config;
 DROP TABLE IF EXISTS cashreglog;
@@ -89,6 +90,7 @@ DROP TABLE IF EXISTS stats;
 DROP TABLE IF EXISTS nodesessions;
 DROP TABLE IF EXISTS customerassignments;
 DROP TABLE IF EXISTS customergroups;
+DROP TABLE IF EXISTS numberplanusers;
 DROP TABLE IF EXISTS numberplanassignments;
 DROP TABLE IF EXISTS payments;
 DROP TABLE IF EXISTS tariffassignments;
@@ -1808,6 +1810,21 @@ CREATE TABLE numberplanassignments (
 
 # --------------------------------------------------------
 #
+# Structure of table numberplanusers
+#
+CREATE TABLE numberplanusers (
+    planid int(11) NOT NULL,
+    userid int(11) NOT NULL,
+    UNIQUE KEY numberplanusers_userid_ukey (planid, userid),
+    INDEX numberplanusers_userid_idx (userid),
+    CONSTRAINT numberplanusers_planid_fkey
+       FOREIGN KEY (planid) REFERENCES numberplans (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT numberplanusers_userid_fkey
+       FOREIGN KEY (userid) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+# --------------------------------------------------------
+#
 # Structure of table customergroups
 #
 CREATE TABLE customergroups (
@@ -2555,6 +2572,21 @@ CREATE TABLE customercontacts (
 	INDEX contact (contact),
 	CONSTRAINT customercontacts_customerid_fkey
 		FOREIGN KEY (customerid) REFERENCES customers (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+# --------------------------------------------------------
+#
+# Structure of table "customercontactproperties"
+#
+CREATE TABLE customercontactproperties (
+    contactid   int(11)         NOT NULL,
+    name        varchar(255)    NOT NULL,
+    value       varchar(255)    NOT NULL,
+    CONSTRAINT customercontactproperties_contactid_fkey
+        FOREIGN KEY (contactid) REFERENCES customercontacts (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY customercontactproperties_name_idx (name),
+    KEY customercontactproperties_value_idx (value),
+    UNIQUE KEY customercontactproperties_contactid_name_ukey (contactid, name)
 ) ENGINE=InnoDB;
 
 # --------------------------------------------------------
@@ -3459,7 +3491,7 @@ URL: %url
 ('phpui','ticket_template_file','rtticketprint.html','',0),
 ('phpui','use_current_payday','false','',0),
 ('phpui','default_monthly_payday','','',0),
-('phpui','newticket_notify','false','',0),
+('phpui','newticket_notify','true','',0),
 ('phpui','to_words_short_version','false','',0),
 ('phpui','ticketlist_status','','',0),
 ('phpui','ewx_support','false','',0),
@@ -3488,7 +3520,7 @@ URL: %url
 ('invoices','cnote_template_file','invoice.html','',0),
 ('invoices','print_balance_history','false','',0),
 ('invoices','print_balance_history_limit','10','',0),
-('invoices','default_printpage','original,copy','',0),
+('invoices','default_printpage','original','',0),
 ('invoices','type','html','',0),
 ('invoices','attachment_name','','',0),
 ('invoices','paytime','14','',0),
@@ -3929,4 +3961,4 @@ INSERT INTO netdevicemodels (name, alternative_name, netdeviceproducerid) VALUES
 ('XR7', 'XR7 MINI PCI PCBA', 2),
 ('XR9', 'MINI PCI 600MW 900MHZ', 2);
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion', '2021012100');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion', '2021020301');

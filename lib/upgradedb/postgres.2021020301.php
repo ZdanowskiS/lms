@@ -5,8 +5,6 @@
  *
  *  (C) Copyright 2001-2021 LMS Developers
  *
- *  Please, see the doc/AUTHORS for more information about authors!
- *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License Version 2 as
  *  published by the Free Software Foundation.
@@ -21,16 +19,22 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
  *  USA.
  *
- *  $Id$
  */
 
-$id = intval($_GET['id']);
+$this->BeginTrans();
 
-if ($id) {
-    if (!$DB->GetOne('SELECT COUNT(*) FROM documents WHERE numberplanid=?', array($id))
-        && $LMS->checkNumberPlanAccess($id)) {
-        $LMS->deleteNumberPlan($id);
-    }
-}
+$this->Execute("
+    CREATE TABLE customercontactproperties (
+    contactid   integer         NOT NULL
+        CONSTRAINT customercontactproperties_contactid_fkey REFERENCES customercontacts (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    name        varchar(255)    NOT NULL,
+    value       varchar(255)    NOT NULL,
+    CONSTRAINT customercontactproperties_contactid_name_ukey UNIQUE (contactid, name)
+    );
+    CREATE INDEX customercontactproperties_name_idx ON customercontactproperties (name);
+    CREATE INDEX customercontactproperties_value_idx ON customercontactproperties (value);
+");
 
-$SESSION->redirect('?m=numberplanlist');
+$this->Execute("UPDATE dbinfo SET keyvalue = ? WHERE keytype = ?", array('2021020301', 'dbversion'));
+
+$this->CommitTrans();

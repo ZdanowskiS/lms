@@ -160,19 +160,10 @@ switch ($action) {
             $invoice['deadline'] = $currtime + $paytime * 86400;
         }
 
-        if (isset($customer)) {
-            $invoice['numberplanid'] = $DB->GetOne(
-                'SELECT n.id FROM numberplans n
-				JOIN numberplanassignments a ON (n.id = a.planid)
-				WHERE n.doctype = ? AND n.isdefault = 1 AND a.divisionid = ?',
-                array($invoice['proforma'] ? DOC_INVOICE_PRO : DOC_INVOICE, $customer['divisionid'])
-            );
-        }
-
-        if (empty($invoice['numberplanid'])) {
-            $invoice['numberplanid'] = $DB->GetOne('SELECT id FROM numberplans
-				WHERE doctype = ? AND isdefault = 1', array($invoice['proforma'] ? DOC_INVOICE_PRO : DOC_INVOICE));
-        }
+        $invoice['numberplanid'] = $LMS->getDefaultNumberPlanID(
+            $invoice['proforma'] ? DOC_INVOICE_PRO : DOC_INVOICE,
+            empty($customer) ? null : $customer['divisionid']
+        );
 
         $hook_data = array(
             'invoice' => $invoice,
@@ -527,6 +518,10 @@ switch ($action) {
             $error['currency'] = trans('Invalid currency selection!');
         }
 
+        if (!empty($invoice['numberplanid']) && !$LMS->checkNumberPlanAccess($invoice['numberplanid'])) {
+            $error['numberplanid'] = trans('Permission denied!');
+        }
+
         $hook_data = array(
             'customer' => $customer,
             'contents' => $contents,
@@ -550,7 +545,20 @@ switch ($action) {
         }
 
         $DB->BeginTrans();
-        $DB->LockTables(array('documents', 'cash', 'invoicecontents', 'numberplans', 'divisions', 'vdivisions'));
+        $tables = array('documents', 'cash', 'invoicecontents', 'numberplans', 'divisions', 'vdivisions', 'addresses');
+        if ($SYSLOG) {
+            $tables = array_merge($tables, array('logmessages', 'logmessagekeys', 'logmessagedata'));
+        }
+
+        $hook_data = array(
+            'tables' => array(),
+        );
+        $hook_data = $LMS->ExecuteHook('invoicenew_save_lock_tables', $hook_data);
+        if (is_array($hook_data['tables']) && !empty($hook_data['tables'])) {
+            $tables = array_unique(array_merge($tables, $hook_data['tables']));
+        }
+
+        $DB->LockTables($tables);
 
         if (!$invoice['number']) {
             $invoice['number'] = $LMS->GetNewDocumentNumber(array(

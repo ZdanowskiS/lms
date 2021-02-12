@@ -42,6 +42,26 @@ version 27-git (????-??-??):
   - improvement: allow to check/uncheck all consent checkboxes with single click [chilan]
   - improvement: 'phpui.nodepassword_required' allows to make password required
     or recommended ('false' by default) [chilan]
+  - enhancement: allow to change ports in network link properties popup [chilan]
+  - enhancement: introduce support for customer email address properties to support EPIX MdO [ravvar]
+  - enhancement: number plan user assignment support [chilan]
+  - enhancement: 'rt.detect_customer_location_address' controls location address automatic detection
+    of newly created helpdesk ticket ('false' by default) [chilan]
+  - enhancement: more customer balance substitution symbol support in add message form [chilan]
+  - improvement: 'invoices.default_printpage' default value changed to 'original' [chilan]
+  - improvement: changed default value of 'payments.delete_old_assignments_after_days' from '30'
+    to '0' [chilan]
+  - improvement: date period selector added in voip billing record list [chilan]
+  - improvement: separate configuration import function to dedicated form in main menu [ravvar]
+  - improvement: 'phpui.default_show_approved_assignments_only' controls if only approved assignments are presented
+    by default (default value: 'true') [chilan]
+  - improvement: 'phpui.default_show_expired_assignments' controls if expired assignments are presented
+    by default (default value: 'false') [chilan]
+  - improvement: changed default value of 'phpui.newticket_notify' from 'false' to 'true' [chilan]
+  - enhancement: new node list filter - nodes with locks [chilan]
+  - improvement: show lock icon on node list when given node has active lock in schedule [chilan]
+  - improvement: add 'phpui.supported_currencies' setting that specifies the list of available currencies
+    identified by ISO symbols [ravvar]
 
 version 26.0 (2020-12-15):
 

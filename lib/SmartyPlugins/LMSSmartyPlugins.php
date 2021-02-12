@@ -91,20 +91,32 @@ class LMSSmartyPlugins
             ? $params['selected'] : null;
         $defaultSelected = Localisation::getCurrentCurrency();
         $locked = isset($params['locked']) && $params['locked'];
+
+        $currencies = $GLOBALS['CURRENCIES'];
+        $phpuiSupportedCurrencies = ConfigHelper::getConfig('phpui.supported_currencies', false);
+        if ($phpuiSupportedCurrencies) {
+            $supportedCurrencies = array_flip(explode(',', $phpuiSupportedCurrencies));
+            $currencies = array_intersect_key($currencies, $supportedCurrencies);
+            if ($selected) {
+                $currencies[$selected] = $selected;
+            }
+        }
+
         if (function_exists('get_currency_value') && !$locked) {
             $result = '<select class="'. (!$selected ? 'lms-ui-warning' : '')
                 .'" name="' . $elementname . '" '
                 . self::tipFunction(array('text' => !$selected ? 'Select currency and save' : 'Select currency'), $template)
                 . (isset($params['form']) ? ' form="' . $params['form'] . '"' : '') . '>';
-            foreach ($GLOBALS['CURRENCIES'] as $currency) {
+            foreach ($currencies as $currency) {
                 $result .= '<option value="' . $currency . '"'
                 . (($selected && $currency == $selected) || (!$selected && $currency == $defaultSelected)  ? ' selected' : '') . '>' . $currency . '</option>';
             }
             $result .= '</select>';
         } else {
-            $result = Localisation::getCurrentCurrency() . '<input type="hidden" name="' . $elementname . '"'
+            $lockedSelected = ($selected ? $selected : $defaultSelected);
+            $result = $lockedSelected . '<input type="hidden" name="' . $elementname . '"'
                 . (isset($params['form']) ? ' form="' . $params['form'] . '"' : '') . ' value="'
-                . Localisation::getCurrentCurrency() . '">';
+                . $lockedSelected . '">';
         }
 
         return $result;

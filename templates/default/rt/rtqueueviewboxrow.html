@@ -28,7 +28,7 @@
 		<span><br>{trans($_RT_TYPES[$ticket.type].label)}</span>
 	</TD>
 	<TD class="valign-middle">
-		<span class="bold">{$ticket.subject|truncate:"100":"&hellip;"|escape|default:"&nbsp;"}</span>
+		<span class="bold">{$ticket.subject|trunescape:100|default:"&nbsp;"}</span>
 		{foreach $ticket.categories as $tc}
 			<a href="?m=rtqueueview&persistent-filter=-1&catid={$tc.categoryid}&s=-1&priority=all&unread=-1&o=lastmodified,desc">
 				<div class="lms-ui-category-label" style="{$tc.style}">
@@ -38,18 +38,14 @@
 		{/foreach}
 		{if $ticket.customerid}
 			<br>
-			<A href="?m=customerinfo&id={$ticket.customerid}">{$ticket.requestor|truncate:"60":"&hellip;"|escape}</A>
+			<A href="?m=customerinfo&id={$ticket.customerid}">{$ticket.customername|trunescape:60}</A>
 		{/if}
+		{if !$ticket.customerid && $ticket.requestor_userid}<br>{/if}
 		{if $ticket.requestor_userid}
-		<br>
-		<A href="?m=userinfo&id={$ticket.requestor_userid}">{$ticket.requestor_username}</A>
-		{elseif $ticket.requestor_name || $ticket.requestor_mail || $ticket.requestor_phone}
-			<br>
-			{$ticket.requestor|escape}
-			{if $ticket.requestor_phone}<BR>{$ticket.requestor_phone}{/if}
-			{if $ticket.requestor_mail}<BR>
-			<A href="mailto:{$ticket.requestor_mail}""> &lt;{$ticket.requestor_mail}&gt;</A>
-			{/if}
+			<a href="?m=userinfo&id={$ticket.requestor_userid}">{$ticket.requestor_name|escape}</a>
+		{elseif $ticket.req || $ticket.requestor_mail || $ticket.requestor_phone}
+			<br>{$ticket.req|escape}{if $ticket.requestor_phone} <a href="tel:{$ticket.requestor_phone|escape}">{$ticket.requestor_phone|escape}</a>{/if}
+			{if $ticket.requestor_mail}<a href="mailto:{$ticket.requestor_mail}"> {$ticket.requestor_mail|escape}</a>{/if}
 		{/if}
 	</TD>
 	<TD class="valign-middle ticket-location">
@@ -79,7 +75,7 @@
 		{/if}
 	</TD>
 	<TD class="nobr">
-		{if $ticket.ownername}{$ticket.ownername|truncate:25:"&hellip;":true|escape}{else}-{/if}<br>
+		{if $ticket.ownername}{$ticket.ownername|trunescape:25}{else}-{/if}<br>
 		{$ticket.lastmodified|date_format:"%Y/%m/%d %H:%M:%S"|default:"-"}
 	</TD>
 	<TD class="text-center nobr ticket-events">

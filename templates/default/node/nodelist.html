@@ -53,6 +53,11 @@
 			text-align: left;
 		}
 	}
+
+	.node-lock-icon {
+		margin-left: 0.4em;
+	}
+
 </style>
 
 <H1>{$layout.pagetitle}</H1>
@@ -125,6 +130,7 @@
 					<OPTION VALUE="6"{if $filter.status == 6} SELECTED{/if}>{trans("Net Device not specified")}</OPTION>
 					<option value="9"{if $filter.status == 9} selected{/if}>{trans("without radio sector")}</option>
 					<OPTION VALUE="7"{if $filter.status == 7} SELECTED{/if}>{trans("with warning")}</OPTION>
+					<option value="10"{if $filter.status == 10} selected{/if}>{trans("with locks")}</option>
 					<OPTION value="8"{if $filter.status == 8} selected{/if}>{trans("without gps coords")}</OPTION>
 				</SELECT></SPAN>
 				</label>
@@ -239,7 +245,7 @@
 			{if $node.info}
 			    {icon name="info" tip=$node.info}
 			{/if}
-			{$node.name}</A></span>
+			{$node.name}</A>{if $node.locked}{icon name="lock" tip="<!node>lock is active" class="node-lock-icon"}{/if}</span>
 			<br>
 			<span class="nobr{if ! $node.access} blend{/if}">
 				{icon name="customer" class="fa-fw"}

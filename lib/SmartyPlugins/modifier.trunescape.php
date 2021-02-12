@@ -24,13 +24,11 @@
  *  $Id$
  */
 
-$id = intval($_GET['id']);
-
-if ($id) {
-    if (!$DB->GetOne('SELECT COUNT(*) FROM documents WHERE numberplanid=?', array($id))
-        && $LMS->checkNumberPlanAccess($id)) {
-        $LMS->deleteNumberPlan($id);
+function smarty_modifier_trunescape($text, $length)
+{
+    if (mb_strlen($text) > $length) {
+        return htmlspecialchars(mb_substr($text, 0, $length), ENT_QUOTES) . '&hellip;';
+    } else {
+        return htmlspecialchars($text, ENT_QUOTES);
     }
 }
-
-$SESSION->redirect('?m=numberplanlist');
