@@ -1,7 +1,7 @@
 <?php
 $GAMMU = GAMMUPlugin::getGAMMUInstance();
 
-$layout['pagetitle'] = trans('GAMMU Outbox List');
+$layout['pagetitle'] = trans('GAMMU').' - '.trans('Outbox List');
 
 if(!isset($_GET['o']))
 	$SESSION->restore('gio', $o);

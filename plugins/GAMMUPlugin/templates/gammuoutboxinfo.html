@@ -29,7 +29,7 @@
 			<B>{trans("Status")}:</B>
 		</TD>
 		<TD style="width: 90%;">
-			{$outboxinfo.Status}
+			{if $outboxinfo.Status}{$outboxinfo.Status}{else}-{/if}
 		</TD>
 	</TR>
 	<TR>
@@ -40,7 +40,7 @@
 			<B>{trans("Class")}:</B>
 		</TD>
 		<TD style="width: 90%;">
-			{$_GAMMUCLASS[$outboxinfo.Class]}
+			{if $outboxinfo.Class}{$_GAMMUCLASS[$outboxinfo.Class]}{else}-{/if}
 		</TD>
 	</TR>
 	<TR>

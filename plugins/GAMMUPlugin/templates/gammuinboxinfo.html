@@ -23,7 +23,18 @@
 						<TABLE style="width: 100%;" CELLPADDING="3">
 	<TR>
 		<TD style="width: 1%;">
-			<IMG SRC="img/sms.gif" ALT="{trans("date:")}">
+			<IMG SRC="img/customer.gif" ALT="{trans("customer:")}">
+		</TD>
+		<TD>
+			<B>{trans("Customer")}:</B>
+		</TD>
+		<TD style="width: 90%;">
+			<A href="?m=customerinfo&amp;id={$inboxinfo.customerid}">{$inboxinfo.customer}</A>
+		</TD>
+	</TR>
+	<TR>
+		<TD style="width: 1%;">
+			<IMG SRC="img/sms.gif" ALT="{trans("status:")}">
 		</TD>
 		<TD>
 			<B>{trans("Status")}:</B>
@@ -40,7 +51,7 @@
 			<B>{trans("Class")}:</B>
 		</TD>
 		<TD style="width: 90%;">
-			{$_GAMMUCLASS[$inboxinfo.Class]}
+			{if $inboxinfo.Class}{$_GAMMUCLASS[$inboxinfo.Class]}{else}-{/if}
 		</TD>
 	</TR>
 	<TR>

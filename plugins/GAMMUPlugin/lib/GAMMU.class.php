@@ -27,8 +27,6 @@ class GAMMU {
 
         switch ($dbtype) {
             case self::MYSQL:
-                $db = new LMSDB_driver_mysql($dbhost, $dbuser, $dbpasswd, $dbname);
-                break;
             case self::MYSQLI:
                 $db = new LMSDB_driver_mysqli($dbhost, $dbuser, $dbpasswd, $dbname);
                 break;
@@ -61,7 +59,6 @@ class GAMMU {
 		}
         if ($this->gdb === null) {
             $_DBTYPE = (ConfigHelper::getConfig('gammudb.type') ? ConfigHelper::getConfig('gammudb.type') : 'mysql');
-            #$_DBHOST = ConfigHelper::getConfig('iptv-radius.host');
 			$_DBHOST = (ConfigHelper::getConfig('gammudb.ip') ? ConfigHelper::getConfig('gammudb.ip') : '127.0.0.1');
             $_DBUSER = (ConfigHelper::getConfig('gammudb.user') ? ConfigHelper::getConfig('gammudb.user') : '');
             $_DBPASS = (ConfigHelper::getConfig('gammudb.password') ? ConfigHelper::getConfig('gammudb.password') : '');
@@ -71,7 +68,6 @@ class GAMMU {
                 $_DBDEBUG = ConfigHelper::checkValue(LMSConfig::getIniConfig()->getSection('database')->getVariable('debug')->getValue());
             }
             $this->gdb = $this->getDB($_DBTYPE, $_DBHOST, $_DBUSER, $_DBPASS, $_DBNAME, $_DBDEBUG);
-
         }
     }
 
@@ -80,8 +76,9 @@ class GAMMU {
 		$this->gdb=null;
 	}
 
-	public function GetInboxList($order = 'name,asc', $limit = null, $offset = null, $count = false)
+	public function GetInboxList($order = 'name,asc', $datefrom, $dateto, $limit = null, $offset = null, $count = false)
 	{
+        global $DB, $LMS;
 		$this->getInstance();
 		if(!is_object($this->gdb)){
 			return;	
@@ -114,12 +111,28 @@ class GAMMU {
 						Class, TextDecoded, ID, RecipientID, Processed, Status ';
 		}
 		$sql .= ' FROM inbox  WHERE 1=1 '
+                    .($datefrom ? ' AND unix_timestamp(ReceivingDateTime)>'.$datefrom : '')
+                    .($dateto ? ' AND unix_timestamp(ReceivingDateTime)<'.$dateto : '')
 					.($sqlord != ''  && !$count ? $sqlord . ' ' . $direction : '')
                 	.($limit !== null && !$count ? ' LIMIT ' . $limit : '')
                 	.($offset !== null && !$count ? ' OFFSET ' . $offset : '');
 
 		if (!$count) {
 			$inboxlist = $this->gdb->GetAll($sql);
+
+            foreach($inboxlist as $k => $sms)
+            {
+                $shortnumber=null;
+                
+                if(strpos($sms['SenderNumber'],'+')!==false)
+                    $shortnumber=substr($sms['SenderNumber'], 3);
+
+                $inboxlist[$k]['customerid']=$DB->GetOne('SELECT customerid FROM customercontacts 
+                                                       WHERE contact='.$DB->Escape($sms['SenderNumber'])
+                                                       .($shortnumber ? ' OR contact='.$DB->Escape($shortnumber) : ''));
+                if($inboxlist[$k]['customerid'])
+                    $inboxlist[$k]['customer']=$LMS->getCustomerName($inboxlist[$k]['customerid']);
+            } 
 
 			$inboxlist['total'] = count($inboxlist);
 			$inboxlist['order'] = $order;
@@ -134,16 +147,33 @@ class GAMMU {
 
 	public function GetInbox($id)
 	{
+        global $DB, $LMS;
+
 		$this->getInstance();
 		if(!is_object($this->gdb)){
 			return;	
 		}
 
-		return $this->gdb->GetRow('SELECT UpdatedInDB,  ReceivingDateTime, Text, SenderNumber, Coding, UDH, SMSCNumber, 
+		$result = $this->gdb->GetRow('SELECT UpdatedInDB,  ReceivingDateTime, Text, SenderNumber, Coding, UDH, SMSCNumber, 
 						Class, TextDecoded, ID, RecipientID, Processed, Status 
 							FROM inbox 
 							WHERE ID=?',
 							array($id));
+
+        $shortnumber=null;
+                
+        if(strpos($result['SenderNumber'],'+')!==false)
+            $shortnumber=substr($result['SenderNumber'], 3);
+        elseif(strlen($sms['SenderNumber'])==11)
+            $shortnumber=substr($sms['SenderNumber'], 2);
+
+        $result['customerid']=$DB->GetOne('SELECT customerid FROM customercontacts 
+                                                       WHERE contact='.$DB->Escape($result['SenderNumber'])
+                                                       .($shortnumber ? ' OR contact='.$DB->Escape($shortnumber) : ''));
+        if($result['customerid'])
+            $result['customer']=$LMS->getCustomerName($result['customerid']);
+
+        return $result;
 	}
 
 	public function InboxExists($id)
@@ -238,7 +268,110 @@ class GAMMU {
 
 		return ($this->gdb->GetOne('SELECT id FROM outbox WHERE id=?',array($id)) ? TRUE : FALSE);
 	}
+######
+	public function GetSentList($order = 'name,asc', $limit = null, $offset = null, $count = false)
+	{
+        global $DB, $LMS;
+		$this->getInstance();
+		if(!is_object($this->gdb)){
+			return;	
+		}
 
+		list($order, $direction) = sscanf($order, '%[^,],%s');
+
+        ($direction != 'desc') ? $direction = 'asc' : $direction = 'desc';
+
+        switch ($order) {
+            case 'sendernumber':
+                $sqlord = ' ORDER BY SenderNumber';
+                break;
+            case 'senderid':
+                $sqlord = ' ORDER BY SenderID';
+                break;
+            case 'status':
+                $sqlord = ' ORDER BY Status';
+                break;
+            default:
+                $sqlord = ' ORDER BY id';
+                break;
+		}
+
+		$sql = '';
+		if($count) {
+			$sql .= 'SELECT COUNT(*) ';
+		}else {
+			$sql .= 'SELECT UpdatedInDB, InsertIntoDB, SendingDateTime, Text,
+								DestinationNumber, Coding, UDH, Class, TextDecoded, ID, RelativeValidity,
+								SenderID, CreatorID, Status,
+								StatusCode ';
+		}
+		$sql .= 'FROM sentitems WHERE 1=1'
+                    .($datefrom ? ' AND unix_timestamp(InsertIntoDB)>'.$datefrom : '')
+                    .($dateto ? ' AND unix_timestamp(InsertIntoDB)<'.$dateto : '')
+					.($sqlord != ''  && !$count ? $sqlord . ' ' . $direction : '')
+                	.($limit !== null && !$count ? ' LIMIT ' . $limit : '')
+                	.($offset !== null && !$count ? ' OFFSET ' . $offset : '');
+
+		if (!$count) {
+			$sentlist = $this->gdb->GetAll($sql);
+
+            foreach($sentlist as $k => $sms)
+            {
+                $shortnumber=null;
+                
+                if(strpos($sms['DestinationNumber'],'+')!==false)
+                    $shortnumber=substr($sms['DestinationNumber'], 3);
+                elseif(strlen($sms['DestinationNumber'])==11)
+                    $shortnumber=substr($sms['DestinationNumber'], 2);
+
+                $sentlist[$k]['customerid']=$DB->GetOne('SELECT customerid FROM customercontacts 
+                                                       WHERE contact='.$DB->Escape($sms['DestinationNumber'])
+                                                       .($shortnumber ? ' OR contact='.$DB->Escape($shortnumber) : ''));
+                if($sentlist[$k]['customerid'])
+                    $sentlist[$k]['customer']=$LMS->getCustomerName($sentlist[$k]['customerid']);
+            } 
+
+#print_r($sentlist);
+			$sentlist['total'] = count($sentlist);
+			$sentlist['order'] = $order;
+			$sentlist['direction'] = $direction;
+
+			return $sentlist;
+		}else {
+			return $this->gdb->getOne($sql);
+		}
+		return;
+	}
+
+	public function GetSent($id)
+	{
+        global $DB, $LMS;
+
+		$this->getInstance();
+		if(!is_object($this->gdb)){
+			return;	
+		}
+
+		$result = $this->gdb->GetRow('SELECT UpdatedInDB,  SendingDateTime, Text, DestinationNumber, Coding, UDH, SMSCNumber, 
+                                Class, TextDecoded, ID, CreatorID, Status FROM sentitems 
+							        WHERE ID=?',
+							        array($id));
+
+        $shortnumber=null;
+                
+        if(strpos($result['DestinationNumber'],'+')!==false)
+            $shortnumber=substr($result['DestinationNumber'], 3);
+        elseif(strlen($result['DestinationNumber'])==11)
+            $shortnumber=substr($result['DestinationNumber'], 2);
+
+        $result['customerid']=$DB->GetOne('SELECT customerid FROM customercontacts 
+                                                       WHERE contact='.$DB->Escape($result['DestinationNumber'])
+                                                       .($shortnumber ? ' OR contact='.$DB->Escape($shortnumber) : ''));
+        if($result['customerid'])
+            $result['customer']=$LMS->getCustomerName($result['customerid']);
+
+        return $result;
+	}
 ####Phones
 	public function GetPhonesList($order = 'netname,asc', $limit = null, $offset = null, $count = false)
 	{

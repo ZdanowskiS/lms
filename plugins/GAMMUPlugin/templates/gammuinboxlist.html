@@ -13,7 +13,9 @@
 <TABLE class="lmsbox">
 	<COLGROUP>
 		<COL style="width: 10%;">
+		<COL style="width: 10%;">
 		<COL style="width: 60%;">
+		<COL style="width: 10%;">
 		<COL style="width: 10%;">
 		<COL style="width: 5%;">
 		<COL style="width: 1%;">
@@ -21,16 +23,19 @@
 	<THEAD>
 	<TR {tip text="Click on column name to change sorting order"}>
 		<td scope="col">
-			<SPAN class="nobr"><IMG SRC="img/phone.gif" ALT=""><A href="?m=gammuinboxlist&amp;o=sendernumber{if $listdata.direction eq "asc" && $listdata.order eq "sendernumber"},desc{/if}">{trans("Sender Number")}:</A>{if $listdata.order eq "sendernumber"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+			<SPAN class="nobr"><IMG SRC="img/phone.gif" ALT=""><A href="?m=gammuinboxlist&amp;o=sendernumber{if $listdata.direction eq "asc" && $listdata.order eq "sendernumber"},desc{/if}">{trans("Sender Number:")}</A>{if $listdata.order eq "sendernumber"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+		</td>
+		<td scope="col">
+			<SPAN class="nobr"><IMG SRC="img/customer.gif" ALT="">{trans("Customer:")}</A></SPAN>
 		</td>
 		<td scope="col">
 			<SPAN class="nobr"><A href="?m=gammuinboxlist&amp;o=text{if $listdata.direction eq "asc" && $listdata.order eq "text"},desc{/if}">{trans("Text:")}</A>{if $listdata.order eq "text"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
 		</td>
 		<td scope="col">
-			<SPAN class="nobr"><A href="?m=gammuinboxlist&amp;o=recivingdatetime{if $listdata.direction eq "asc" && $listdata.order eq "recivingdatetime"},desc{/if}">{trans("Receiving")}:</A>{if $listdata.order eq "recivingdatetime"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+			<SPAN class="nobr"><A href="?m=gammuinboxlist&amp;o=recivingdatetime{if $listdata.direction eq "asc" && $listdata.order eq "recivingdatetime"},desc{/if}">{trans("Receiving Date Time:")}</A>{if $listdata.order eq "recivingdatetime"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
 		</td>
 		<td scope="col">
-			<SPAN class="nobr"><A href="?m=gammuinboxlist&amp;o=updateindb{if $listdata.direction eq "asc" && $listdata.order eq "updateindb"},desc{/if}">{trans("Update")}:</A>{if $listdata.order eq "updateindb"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
+			<SPAN class="nobr"><A href="?m=gammuinboxlist&amp;o=updateindb{if $listdata.direction eq "asc" && $listdata.order eq "updateindb"},desc{/if}">{trans("Update:")}</A>{if $listdata.order eq "updateindb"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
 		</td>
 		<td scope="col">
 			<SPAN class="nobr"><A href="?m=gammuinboxlist&amp;o=id{if $listdata.direction eq "asc" && $listdata.order eq "id"},desc{/if}">{trans("ID")}:</A>{if $listdata.order eq "id"} <IMG SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}</SPAN>
@@ -40,18 +45,23 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD colspan="6">
+		<TD colspan="7">
 			<FORM METHOD="GET" ACTION="?m={$layout.module}" NAME="choosefilter">
 				<INPUT type="submit" class="hiddenbtn">
 				<INPUT TYPE="HIDDEN" NAME="m" VALUE="gammuinboxlist">
 				{*<INPUT TYPE="HIDDEN" NAME="page" VALUE="1">*}
 				<B>{trans("Filter:")}</B>
+						<label for="datefrom">{trans("From:")}</label>
+						<input type="text" size="12" name="datefrom" id="datefrom" value="{$listdata.datefrom|date_format:"Y/m/d"}" placeholder="{trans("yyyy/mm/dd")}" {tip class="lms-ui-date" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>&nbsp;
+						<label for="dateto">{trans("To:")}</label>
+						<input type="text" size="12" name="dateto" id="dateto" value="{$listdata.dateto|date_format:"Y/m/d"}" placeholder="{trans("yyyy/mm/dd")}" {tip class="lms-ui-date" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>&nbsp;
+<A href="javascript: void(0);" onclick="document.choosefilter.submit();">&raquo;&raquo;&raquo;</A>
 			</FORM>
 		</TD>
 	</TR>
 	{if $pagination->getTotal() != 0}
 	<TR>
-		<TD class="lms-ui-pagination" colspan="6">
+		<TD class="lms-ui-pagination" colspan="7">
 			{include file="pagination.html"}
 		</TD>
 	</TR>
@@ -60,7 +70,7 @@
 	<TFOOT>
 	{if $pagination->getTotal() != 0}
 	<TR>
-		<TD class="lms-ui-pagination" colspan="6">
+		<TD class="lms-ui-pagination" colspan="7">
 			{include file="pagination.html"}
 		</TD>
 	</TR>
@@ -75,7 +85,10 @@
 			<B>{$item.SenderNumber}</B>
 		</TD>
 		<TD class="nobr">
-			{$item.Text}
+			<A href="?m=customerinfo&amp;id={$item.customerid}">{$item.customer}</A>
+		</TD>
+		<TD class="nobr">
+			{$item.TextDecoded}
 		</TD>
 		<TD class="nobr">
 			{$item.ReceivingDateTime}
@@ -92,7 +105,7 @@
 	</TR>
 	{foreachelse}
 	<TR>
-		<TD colspan="3" class="empty-table">
+		<TD colspan="7" class="empty-table">
 			<p>{trans("No messages found in database.")}</p>
 		</TD>
 	</TR>

@@ -2,7 +2,7 @@
 
 $GAMMU = GAMMUPlugin::getGAMMUInstance();
 
-$layout['pagetitle'] = trans('GAMMU Inbox SMS Info:');
+$layout['pagetitle'] = trans('GAMMU').' - '.trans('Inbox, SMS Info:');
 
 
 if (!preg_match('/^[0-9]+$/', $_GET['id'])) {

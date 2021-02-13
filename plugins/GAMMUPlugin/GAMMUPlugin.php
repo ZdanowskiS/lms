@@ -4,7 +4,7 @@ class GAMMUPlugin extends LMSPlugin {
 	const plugin_directory_name = 'GAMMUPlugin';
 	const PLUGIN_DBVERSION = '2019032200';
 	const PLUGIN_NAME = 'GAMMU';
-	const PLUGIN_DESCRIPTION = 'GAMU (BETA) - bezpośredni odczyt bazy danych gammu';
+	const PLUGIN_DESCRIPTION = 'GAMMU - bezpośredni odczyt bazy danych gammu';
 	const PLUGIN_AUTHOR = 'Sylwester Zdanowski';
 
 	private static $gammu = null;

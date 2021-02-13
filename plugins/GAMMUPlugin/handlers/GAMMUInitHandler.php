@@ -55,6 +55,12 @@ class GAMMUInitHandler {
 						'tip' => trans('List of Outbox'),
 						'prio' => 20,
 					),
+					array(
+						'name' => trans('Sent List'),
+						'link' => '?m=gammusentlist',
+						'tip' => trans('List of Sent'),
+						'prio' => 20,
+					),
 				),
 			),
 		);
