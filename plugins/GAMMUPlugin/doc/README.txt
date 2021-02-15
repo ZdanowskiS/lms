@@ -7,7 +7,7 @@ Wysyłanie wymaga dania systemowi dostępu do katalogu z którego skrypt będzie
 
 INJECT-SMS
 Skrypt przeznaczony na system z zainstalowanym gammu. Odczyta SMSy w formie plików ze wskazanej ścieżki, wywoła dla każdego gammu-smsd-inject.
-Korzysata z konfiguracji w pliku /etc/gammu/inject-sms.ini analogicznego do konfiguracji LMS
+Korzysta z konfiguracji w pliku /etc/gammu/inject-sms.ini analogicznego do konfiguracji LMS
 
 KONFIGURACJA
 gammudb.type - mysqli lub postgres
